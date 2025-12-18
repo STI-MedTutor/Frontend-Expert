@@ -43,7 +43,7 @@ export default function Login() {
                     transition={{ duration: 0.5 }}
                 >
                     <div className="space-y-2">
-                        <Link to="/" className="flex items-center gap-2 text-teal-600 font-bold text-xl mb-8">
+                        <Link to="/" className="flex items-center gap-2 text-primary font-bold text-xl mb-8">
                             <Stethoscope className="h-6 w-6" />
                             <span>MedExpert</span>
                         </Link>
@@ -84,7 +84,7 @@ export default function Login() {
                                     <label className="text-sm font-medium text-slate-700" htmlFor="password">
                                         Mot de passe
                                     </label>
-                                    <Link to="#" className="text-sm font-medium text-teal-600 hover:underline">
+                                    <Link to="#" className="text-sm font-medium text-primary hover:underline">
                                         Mot de passe oublié ?
                                     </Link>
                                 </div>
@@ -104,7 +104,7 @@ export default function Login() {
 
                         <Button
                             type="submit"
-                            className="w-full h-11 text-base bg-teal-600 hover:bg-teal-700 shadow-lg shadow-teal-500/20"
+                            className="w-full h-11 text-base bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
                             disabled={isLoading}
                         >
                             {isLoading ? (
@@ -130,7 +130,7 @@ export default function Login() {
 
                     <p className="text-center text-sm text-slate-600">
                         Pas encore de compte ?{" "}
-                        <Link to="/register" className="font-semibold text-teal-600 hover:underline">
+                        <Link to="/register" className="font-semibold text-primary hover:underline">
                             S'inscrire
                         </Link>
                     </p>
@@ -139,7 +139,7 @@ export default function Login() {
 
             {/* Right Side - Image */}
             <div className="hidden lg:block relative bg-slate-900 h-full">
-                <div className="absolute inset-0 bg-teal-900/20 mix-blend-overlay z-10" />
+                <div className="absolute inset-0 bg-primary/20 mix-blend-overlay z-10" />
                 <img
                     src={authBg}
                     alt="Medical Background"
@@ -149,7 +149,7 @@ export default function Login() {
                     <blockquote className="text-lg font-medium italic opacity-90">
                         "La médecine est une science d'incertitude et un art de probabilité."
                     </blockquote>
-                    <p className="text-sm font-semibold text-teal-400">— William Osler</p>
+                    <p className="text-sm font-semibold text-accent">— William Osler</p>
                 </div>
             </div>
         </div>

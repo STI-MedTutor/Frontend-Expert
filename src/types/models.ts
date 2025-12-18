@@ -219,3 +219,21 @@ export interface CasCliniqueHistorique {
   date_consultation: string;
 }
 
+
+export interface ValidationSynthese {
+  diagnosis_pose: string;
+  diagnosis_attendu: string;
+  diagnosis_correct: boolean;
+  examens_proposes?: string[];
+  examens_attendus?: string[];
+  examens_manquants?: string[];
+  examens_superflus?: string[];
+  medicaments_proposes?: string[];
+  medicaments_attendus?: Array<string | TraitementPrescrit>;
+  medicaments_manquants?: string[];
+  medicaments_superflus?: string[];
+  medicaments_corrects?: boolean;
+  notes_positives?: string[];
+  notes_negatives?: string[];
+  conseils_techniques?: string;
+}

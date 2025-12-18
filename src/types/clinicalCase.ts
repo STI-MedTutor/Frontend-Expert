@@ -138,6 +138,7 @@ export interface Appointment {
 // Métadonnées du cas clinique (pour STI)
 export interface CaseMetadata {
     pathologie: string;
+    domaine?: string;
     niveau_complexite: 'debutant' | 'intermediaire' | 'avance';
     preuve_integrite?: string;
 }

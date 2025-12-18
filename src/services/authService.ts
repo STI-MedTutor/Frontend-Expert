@@ -14,6 +14,7 @@ export interface RegisterData {
     domaine_expertise?: string;
     etablissement?: string;
     annees_experience?: number;
+    is_teacher?: boolean;
 }
 
 export interface User {
@@ -25,6 +26,8 @@ export interface User {
     etablissement?: string;
     annees_experience?: number;
     role?: string;
+    is_teacher?: boolean;
+    is_enseignant?: boolean | number;
     created_at?: string;
 }
 
@@ -141,6 +144,7 @@ class AuthService {
                 domaine_expertise: data.domaine_expertise,
                 etablissement: data.etablissement,
                 annees_experience: data.annees_experience,
+                est_enseignant: data.is_teacher,
             };
 
             const response = await fetchAPI<AuthResponse>(BACKEND_ENDPOINTS.REGISTER_EXPERT, {

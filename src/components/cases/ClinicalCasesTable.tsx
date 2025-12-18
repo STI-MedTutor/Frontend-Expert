@@ -8,10 +8,13 @@ import {
 } from 'lucide-react';
 import type { ClinicalCase } from '../../types/clinicalCase';
 import { clinicalCasesService } from '../../services/clinicalCasesService';
+import { DOMAINES_EXPERTISE_LIST } from '../../constants/api';
 import { useToast } from '../../stores/toastStore';
+import { useAuth } from '../../stores/authStore';
 import ClinicalCaseModal from './ClinicalCaseModal';
 
 export default function ClinicalCasesTable() {
+  const { user } = useAuth();
   const [cases, setCases] = useState<ClinicalCase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -81,7 +84,8 @@ export default function ClinicalCasesTable() {
     setEditingId(c.id);
     setEditForm({
       consultation_reason: c.consultation_reason,
-      medical_folder_page: { ...c.medical_folder_page }
+      medical_folder_page: { ...c.medical_folder_page },
+      metadata: { ...c.metadata } as any
     });
   };
 
@@ -92,7 +96,12 @@ export default function ClinicalCasesTable() {
 
   const handleSaveEdit = async (id: string) => {
     try {
-      setCases(prev => prev.map(c => c.id === id ? { ...c, ...editForm, medical_folder_page: { ...c.medical_folder_page, ...editForm.medical_folder_page } } : c));
+      setCases(prev => prev.map(c => c.id === id ? {
+        ...c,
+        ...editForm,
+        medical_folder_page: { ...c.medical_folder_page, ...editForm.medical_folder_page },
+        metadata: { ...c.metadata, ...editForm.metadata } as any
+      } : c));
       setEditingId(null);
 
       await clinicalCasesService.updateCase(id, editForm);
@@ -133,12 +142,31 @@ export default function ClinicalCasesTable() {
     toast.success("Fichier JSON téléchargé");
   };
 
-  const filteredCases = cases.filter(c =>
-    (c.patient?.last_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (c.consultation_reason || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (c.medical_folder_page?.diagnostic || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (c.metadata?.pathologie || '').toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCases = cases.filter(c => {
+    // Filtre par domaine d'expertise (Sécurité)
+    const userDomain = user?.domaine_expertise;
+    const caseDomain = c.metadata?.domaine || 'Médecine Générale'; // Fallback si non défini
+
+    // Si l'utilisateur a un domaine défini, il ne voit que son domaine et "Médecine Générale"
+    // On suppose que "Médecine Générale" est accessible à tous ou est le domaine par défaut
+    // Ajustez la logique "Médecine Générale" selon vos besoins exacts.
+    // Ici : Si le cas est "Médecine Générale", tout le monde le voit.
+    // Sinon, il faut que le domaine du cas corresponde au domaine de l'expert.
+    const isVisibleByDomain =
+      !userDomain || // Si pas de domaine user, on montre tout (ou rien, selon sévérité voulue)
+      caseDomain === 'Médecine Générale' ||
+      caseDomain === userDomain;
+
+    if (!isVisibleByDomain) return false;
+
+    // Filtres de recherche existants
+    return (
+      (c.patient?.last_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.consultation_reason || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.medical_folder_page?.diagnostic || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.metadata?.pathologie || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   const getNiveauBadge = (niveau?: string) => {
     switch (niveau) {
@@ -165,7 +193,7 @@ export default function ClinicalCasesTable() {
               placeholder="Rechercher un patient, symptôme, pathologie..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
             />
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -179,29 +207,31 @@ export default function ClinicalCasesTable() {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-2.5 border rounded-xl transition-colors font-medium ${showFilters || filterPathologie || filterNiveau
-                ? 'bg-indigo-100 border-indigo-300 text-indigo-700'
+                ? 'bg-purple-100 border-purple-300 text-primary'
                 : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                 }`}
             >
               <Filter className="w-4 h-4" />
               Filtres
               {(filterPathologie || filterNiveau) && (
-                <span className="w-2 h-2 bg-indigo-500 rounded-full" />
+                <span className="w-2 h-2 bg-primary rounded-full" />
               )}
             </button>
-            <button
-              onClick={() => {
-                setSelectedCase(null);
-                setIsModalOpen(true);
-              }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium shadow-lg shadow-emerald-200"
-            >
-              <Plus className="w-4 h-4" />
-              Nouveau Cas
-            </button>
+            {user?.is_teacher && (
+              <button
+                onClick={() => {
+                  setSelectedCase(null);
+                  setIsModalOpen(true);
+                }}
+                className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium shadow-lg shadow-emerald-200"
+              >
+                <Plus className="w-4 h-4" />
+                Nouveau Cas
+              </button>
+            )}
             <button
               onClick={() => loadCases()}
-              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium shadow-lg shadow-indigo-200"
+              className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-medium shadow-lg shadow-primary/20"
             >
               <Activity className="w-4 h-4" />
               Rafraîchir
@@ -274,12 +304,13 @@ export default function ClinicalCasesTable() {
           <table className="w-full">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Patient</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Motif</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Diagnostic</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Pathologie</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Niveau</th>
-                <th className="px-4 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[12%]">Patient</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[12%]">Motif</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[12%]">Diagnostic</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[15%]">Domaine</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[25%]">Pathologie</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">Niveau</th>
+                <th className="px-4 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[14%]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -288,7 +319,7 @@ export default function ClinicalCasesTable() {
                   <tr>
                     <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
                       <div className="flex justify-center items-center gap-3">
-                        <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                         Chargement des données...
                       </div>
                     </td>
@@ -299,7 +330,7 @@ export default function ClinicalCasesTable() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="group hover:bg-indigo-50/30 transition-colors"
+                    className="group hover:bg-purple-50/30 transition-colors"
                   >
                     {/* Patient Column */}
                     <td className="px-4 py-4 whitespace-nowrap">
@@ -324,7 +355,7 @@ export default function ClinicalCasesTable() {
                           type="text"
                           value={editForm.consultation_reason || ''}
                           onChange={(e) => setEditForm({ ...editForm, consultation_reason: e.target.value })}
-                          className="w-full px-3 py-2 bg-white border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                          className="w-full px-3 py-2 bg-white border border-purple-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm"
                           autoFocus
                         />
                       ) : (
@@ -348,7 +379,7 @@ export default function ClinicalCasesTable() {
                               ...editForm.medical_folder_page
                             } as any
                           })}
-                          className="w-full px-3 py-2 bg-white border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                          className="w-full px-3 py-2 bg-white border border-purple-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm"
                         />
                       ) : (
                         <div className="flex items-center gap-2">
@@ -358,15 +389,62 @@ export default function ClinicalCasesTable() {
                         </div>
                       )}
                     </td>
+                    {/* Domaine Column */}
+                    {/* Domaine Column */}
+                    <td className="px-4 py-4">
+                      {editingId === c.id ? (
+                        <select
+                          value={editForm.metadata?.domaine || ''}
+                          onChange={(e) => setEditForm({
+                            ...editForm,
+                            metadata: {
+                              ...c.metadata,
+                              domaine: e.target.value,
+                              ...editForm.metadata
+                            } as any
+                          })}
+                          className="w-full px-3 py-2 bg-white border border-purple-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm appearance-none cursor-pointer hover:border-primary transition-colors shadow-sm"
+                        >
+                          <option value="">Sélectionner...</option>
+                          {DOMAINES_EXPERTISE_LIST.map(d => (
+                            <option key={d} value={d}>
+                              {d.charAt(0).toUpperCase() + d.slice(1).replace('-', ' ')}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">
+                          {c.metadata?.domaine || 'Médecine Générale'}
+                        </span>
+                      )}
+                    </td>
 
                     {/* Pathologie Column */}
                     <td className="px-4 py-4">
-                      {c.metadata?.pathologie ? (
-                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 border border-indigo-200">
-                          {c.metadata.pathologie}
-                        </span>
+                      {editingId === c.id ? (
+                        <input
+                          type="text"
+                          value={editForm.metadata?.pathologie || ''}
+                          onChange={(e) => setEditForm({
+                            ...editForm,
+                            metadata: {
+                              ...c.metadata,
+                              pathologie: e.target.value,
+                              ...editForm.metadata
+                            } as any
+                          })}
+                          className="w-full px-3 py-2 bg-white border border-purple-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm"
+                        />
                       ) : (
-                        <span className="text-slate-400 text-sm">-</span>
+                        c.metadata?.pathologie ? (
+                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-100 text-primary border border-purple-200" title={c.metadata.pathologie}>
+                            {c.metadata.pathologie.length > 20
+                              ? `${c.metadata.pathologie.substring(0, 20)}...`
+                              : c.metadata.pathologie}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400 text-sm">-</span>
+                        )
                       )}
                     </td>
 
@@ -397,7 +475,7 @@ export default function ClinicalCasesTable() {
                           <>
                             <button
                               onClick={() => handleEditClick(c)}
-                              className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                              className="p-2 text-slate-400 hover:text-primary hover:bg-purple-50 rounded-lg transition-all"
                               title="Modification rapide"
                             >
                               <Edit2 className="w-4 h-4" />
@@ -411,7 +489,7 @@ export default function ClinicalCasesTable() {
                             </button>
                             <button
                               onClick={() => openFullModal(c)}
-                              className="flex items-center gap-2 px-3 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all text-xs font-bold"
+                              className="flex items-center gap-2 px-3 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-primary hover:text-white transition-all text-xs font-bold"
                             >
                               Détails
                               <MoreHorizontal className="w-4 h-4" />

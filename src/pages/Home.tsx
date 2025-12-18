@@ -2,7 +2,7 @@ import { Button } from "../components/ui/Button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Activity, ShieldCheck, Users, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import heroImage from "../assets/hero-image.png";
+import heroImage from "../assets/patient2.png";
 
 export default function Home() {
     const container = {
@@ -31,28 +31,29 @@ export default function Home() {
                     transition={{ duration: 0.8, ease: "easeOut" }}
                 >
                     {/* Decorative Elements */}
-                    <div className="absolute -top-20 -left-20 w-72 h-72 bg-teal-400/20 rounded-full blur-3xl -z-10 animate-pulse" />
-
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 backdrop-blur-sm border border-white/60 text-teal-700 text-sm font-medium shadow-sm">
+                    <div className="absolute -top-20 -left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl -z-10 animate-pulse" />
+{/* Badge 
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 backdrop-blur-sm border border-white/60 text-primary text-sm font-medium shadow-sm">
                         <Sparkles className="w-4 h-4" />
                         <span>Nouvelle version disponible</span>
                     </div>
+                    */}
 
                     <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight text-slate-900">
-                        L'excellence médicale <br />
-                        <span className="bg-gradient-to-r from-teal-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        L’expertise des cas cliniques <br />
+                        <span className="bg-gradient-to-r from-primary via-accent to-purple-600 bg-clip-text text-transparent">
                             à portée de main
                         </span>
                     </h1>
 
                     <p className="max-w-xl text-xl text-slate-600 leading-relaxed">
-                        La plateforme de référence pour la gestion des cas cliniques et l'expertise médicale.
+                        La plateforme dérivée de MedTutor pour la gestion des cas cliniques ,
                         Une interface moderne, intuitive et sécurisée pour les professionnels de santé.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                         <Link to="/cases">
-                            <Button size="lg" variant="gradient" className="gap-2 w-full sm:w-auto text-lg h-14 px-8 rounded-2xl shadow-xl shadow-teal-500/20 hover:shadow-teal-500/30">
+                            <Button size="lg" variant="gradient" className="gap-2 w-full sm:w-auto text-lg h-14 px-8 rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/30">
                                 Gérer les Cas Cliniques <ArrowRight className="h-5 w-5" />
                             </Button>
                         </Link>
@@ -65,13 +66,13 @@ export default function Home() {
                 </motion.div>
 
                 <div className="relative flex justify-center lg:justify-end">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-3xl -z-10 animate-pulse delay-700" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/20 rounded-full blur-3xl -z-10 animate-pulse delay-700" />
 
                     {/* Holographic Container */}
                     <div className="relative w-full max-w-lg">
                         {/* Scanning Line */}
                         <motion.div
-                            className="absolute left-0 right-0 h-1 bg-teal-400 shadow-[0_0_20px_rgba(45,212,191,0.8)] z-20"
+                            className="absolute left-0 right-0 h-1 bg-primary shadow-[0_0_20px_rgba(63,23,83,0.8)] z-20"
                             initial={{ top: "0%", opacity: 0 }}
                             animate={{
                                 top: ["0%", "100%"],
@@ -116,7 +117,7 @@ export default function Home() {
                         {[...Array(10)].map((_, i) => (
                             <motion.div
                                 key={i}
-                                className="absolute w-1 h-1 bg-teal-400 rounded-full z-30"
+                                className="absolute w-1 h-1 bg-primary rounded-full z-30"
                                 initial={{
                                     opacity: 0,
                                     x: Math.random() * 400 - 200,
@@ -151,8 +152,8 @@ export default function Home() {
                 whileInView="show"
                 viewport={{ once: true, margin: "-100px" }}
             >
-                <motion.div variants={item} className="group flex flex-col items-center text-center space-y-4 rounded-3xl border border-white/40 bg-white/60 backdrop-blur-md p-8 shadow-xl shadow-slate-200/50 transition-all hover:-translate-y-1 hover:bg-white/80 hover:shadow-2xl hover:shadow-teal-500/10">
-                    <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 p-4 text-blue-600 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                <motion.div variants={item} className="group flex flex-col items-center text-center space-y-4 rounded-3xl border border-white/40 bg-white/60 backdrop-blur-md p-8 shadow-xl shadow-slate-200/50 transition-all hover:-translate-y-1 hover:bg-white/80 hover:shadow-2xl hover:shadow-primary/10">
+                    <div className="rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 p-4 text-primary shadow-inner group-hover:scale-110 transition-transform duration-300">
                         <Activity className="h-8 w-8" />
                     </div>
                     <h3 className="text-2xl font-bold text-slate-800">Gestion Intuitive</h3>
@@ -162,7 +163,7 @@ export default function Home() {
                 </motion.div>
 
                 <motion.div variants={item} className="group flex flex-col items-center text-center space-y-4 rounded-3xl border border-white/40 bg-white/60 backdrop-blur-md p-8 shadow-xl shadow-slate-200/50 transition-all hover:-translate-y-1 hover:bg-white/80 hover:shadow-2xl hover:shadow-teal-500/10">
-                    <div className="rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 p-4 text-teal-600 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                    <div className="rounded-2xl bg-gradient-to-br from-fuchsia-50 to-fuchsia-100 p-4 text-accent shadow-inner group-hover:scale-110 transition-transform duration-300">
                         <ShieldCheck className="h-8 w-8" />
                     </div>
                     <h3 className="text-2xl font-bold text-slate-800">Sécurité Maximale</h3>

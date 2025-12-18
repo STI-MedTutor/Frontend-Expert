@@ -118,7 +118,7 @@ export default function ClinicalCasesCards() {
                             placeholder="Rechercher un patient, pathologie..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                         />
                     </div>
                     <div className="flex gap-2 flex-wrap">
@@ -132,19 +132,19 @@ export default function ClinicalCasesCards() {
                         <button
                             onClick={() => setShowFilters(!showFilters)}
                             className={`flex items-center gap-2 px-4 py-2.5 border rounded-xl transition-colors font-medium ${showFilters || filterPathologie || filterNiveau
-                                ? 'bg-indigo-100 border-indigo-300 text-indigo-700'
+                                ? 'bg-purple-100 border-purple-300 text-primary'
                                 : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                                 }`}
                         >
                             <Filter className="w-4 h-4" />
                             Filtres
                             {(filterPathologie || filterNiveau) && (
-                                <span className="w-2 h-2 bg-indigo-500 rounded-full" />
+                                <span className="w-2 h-2 bg-primary rounded-full" />
                             )}
                         </button>
                         <button
                             onClick={() => loadCases()}
-                            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium shadow-lg shadow-indigo-200"
+                            className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-medium shadow-lg shadow-primary/20"
                         >
                             <Activity className="w-4 h-4" />
                             Rafraîchir
@@ -167,7 +167,7 @@ export default function ClinicalCasesCards() {
                                     <select
                                         value={filterPathologie}
                                         onChange={(e) => setFilterPathologie(e.target.value)}
-                                        className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                        className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm"
                                     >
                                         <option value="">Toutes</option>
                                         {availablePathologies.map(p => (
@@ -180,7 +180,7 @@ export default function ClinicalCasesCards() {
                                     <select
                                         value={filterNiveau}
                                         onChange={(e) => setFilterNiveau(e.target.value)}
-                                        className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                        className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm"
                                     >
                                         <option value="">Tous</option>
                                         <option value="debutant">🟢 Débutant</option>
@@ -205,7 +205,7 @@ export default function ClinicalCasesCards() {
             {/* Cards Grid */}
             {isLoading ? (
                 <div className="flex justify-center items-center py-20">
-                    <div className="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
                 </div>
             ) : (
                 <motion.div
@@ -221,11 +221,11 @@ export default function ClinicalCasesCards() {
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.9 }}
-                                className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 overflow-hidden cursor-pointer"
+                                className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:shadow-purple-100/50 transition-all duration-300 overflow-hidden cursor-pointer"
                                 onClick={() => openModal(c)}
                             >
                                 {/* Card Header */}
-                                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 border-b border-slate-100">
+                                <div className="bg-gradient-to-r from-purple-50 to-fuchsia-50 p-4 border-b border-slate-100">
                                     <div className="flex items-start justify-between mb-2">
                                         <div className="flex items-center gap-3">
                                             <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shadow-md ${c.patient?.gender === 'F' ? 'bg-pink-400' : 'bg-blue-400'
@@ -249,7 +249,7 @@ export default function ClinicalCasesCards() {
                                 <div className="p-4 space-y-3">
                                     {/* Consultation Info */}
                                     <div>
-                                        <p className="text-sm font-semibold text-indigo-600 line-clamp-2">
+                                        <p className="text-sm font-semibold text-primary line-clamp-2">
                                             {c.consultation_reason}
                                         </p>
                                     </div>
@@ -281,7 +281,7 @@ export default function ClinicalCasesCards() {
                                             e.stopPropagation();
                                             openModal(c);
                                         }}
-                                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-500/70 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium shadow-sm"
+                                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/90 text-white rounded-lg hover:bg-primary transition-colors text-sm font-medium shadow-sm"
                                     >
                                         <Edit2 className="w-4 h-4" />
                                         Modifier

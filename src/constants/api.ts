@@ -24,9 +24,27 @@ export const EXPERT_ENDPOINTS = {
   CASES: '/cases',
   CASE_BY_ID: (id: string) => `/cases/${id}`,
   HEALTH: '/health',
+
+  // Cas d'École
+  CAS_ECOLE: '/cas_ecole',
+  CAS_ECOLE_BY_ID: (id: string) => `/cas_ecole/${id}`,
+  CAS_ECOLE_FROM_FULTANG: '/cas_ecole/from_fultang',
+  CAS_ECOLE_TOGGLE_ACTIF: (id: string) => `/cas_ecole/${id}/toggle_actif`,
+  CAS_CLINIQUES_DISPONIBLES: '/cas_ecole/cas_disponibles',
+  GENERATE: '/generate',
+  VALIDATE_DIAGNOSTIC: '/validate_diagnostic',
+  END_SESSION: '/end_session',
 };
 
 // Configuration
 export const CONFIG = {
   API_TIMEOUT_MS,
+  API_TIMEOUT_GENERATE_CASE_MS: 120000,
 };
+// Liste des domaines d'expertise
+export const DOMAINES_EXPERTISE_LIST = [
+  'cardiologie', 'neurologie', 'pneumologie', 'gastro-enterologie', 'nephrologie',
+  'endocrinologie', 'rhumatologie', 'dermatologie', 'pediatrie', 'geriatrie',
+  'psychiatrie', 'medecine-generale', 'chirurgie-generale', 'gynecologie',
+  'urologie', 'ophtalmologie', 'orl', 'oncologie', 'hematologie', 'infectiologie', 'autre'
+];

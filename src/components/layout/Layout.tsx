@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
-import { Stethoscope, User, Activity, Menu, X, LogOut } from "lucide-react";
+import { User, Activity, Menu, X, LogOut, GraduationCap } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../stores/authStore";
@@ -47,22 +47,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             path: "/cases",
             icon: Activity,
         },
+        ...(user?.is_teacher || user?.is_enseignant ? [{
+            name: "Cas clinique d'école",
+            path: "/cas-ecole",
+            icon: GraduationCap,
+        }] : []),
         {
             name: "Profil Expert",
             path: "/profile",
             icon: User,
         },
     ];
-
     return (
         <div className="min-h-screen flex flex-col">
-            <nav className="sticky top-4 z-50 mx-28 mt-4 rounded-2xl border border-white/20 bg-blue-500/20 backdrop-blur-xl shadow-sm transition-all duration-300">
+            <nav className="sticky top-4 z-50 mx-28 mt-4 rounded-2xl border border-white/20 bg-white/80 backdrop-blur-xl shadow-sm transition-all duration-300">
                 <div className="container mx-auto flex h-16 items-center justify-between px-6">
                     <Link to="/" className="flex items-center gap-2 group">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-blue-600 text-white shadow-lg transition-transform group-hover:scale-105">
-                            <Stethoscope className="h-6 w-6" />
-                        </div>
-                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-700 to-blue-700">
+                        <img
+                            src="/logo-med.png"
+                            alt="MedExpert Logo"
+                            className="h-10 w-auto object-contain transition-transform group-hover:scale-105"
+                        />
+                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
                             MedExpert
                         </span>
                     </Link>
@@ -75,12 +81,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 className={cn(
                                     "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
                                     location.pathname === "/cases"
-                                        ? "text-teal-700 bg-teal-50/50"
-                                        : "text-slate-600 hover:text-teal-600 hover:bg-slate-50"
+                                        ? "text-primary bg-purple-50/50"
+                                        : "text-slate-600 hover:text-primary hover:bg-slate-50"
                                 )}
                             >
                                 <Activity className="h-4 w-4" />
                                 Gestion Cas Cliniques
+                            </Link>
+                        )}
+                        {isAuthenticated && (user?.is_teacher || user?.is_enseignant) && (
+                            <Link
+                                to="/cas-ecole"
+                                className={cn(
+                                    "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
+                                    location.pathname === "/cas-ecole"
+                                        ? "text-primary bg-purple-50/50"
+                                        : "text-slate-600 hover:text-primary hover:bg-slate-50"
+                                )}
+                            >
+                                <GraduationCap className="h-4 w-4" />
+                                Cas clinique d'école
                             </Link>
                         )}
 
@@ -90,12 +110,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <div className="relative profile-menu-container">
                                 <button
                                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                                    className="flex items-center gap-3 px-3 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-teal-700 hover:bg-slate-50 transition-all border border-slate-200 hover:border-teal-200"
+                                    className="flex items-center gap-3 px-3 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-primary hover:bg-slate-50 transition-all border border-slate-200 hover:border-purple-200"
                                 >
                                     <img
                                         src={doctorAvatar}
                                         alt="Profile"
-                                        className="h-8 w-8 rounded-full object-cover border-2 border-teal-500"
+                                        className="h-8 w-8 rounded-full object-cover border-2 border-primary"
                                     />
                                     <span className="font-semibold">
                                         Dr {user?.prenom} {user?.nom}
@@ -133,12 +153,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         ) : (
                             <>
                                 <Link to="/login">
-                                    <button className="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors px-4 py-2">
+                                    <button className="text-sm font-medium text-slate-600 hover:text-primary transition-colors px-4 py-2">
                                         Connexion
                                     </button>
                                 </Link>
                                 <Link to="/register">
-                                    <button className="text-sm font-medium bg-teal-600/80 text-white px-5 py-2.5 rounded-full hover:bg-teal-700 shadow-lg shadow-teal-500/20 transition-all hover:-translate-y-0.5">
+                                    <button className="text-sm font-medium bg-primary text-white px-5 py-2.5 rounded-full hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5">
                                         S'inscrire
                                     </button>
                                 </Link>
@@ -168,11 +188,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 {isAuthenticated && (
                                     <>
                                         {/* Mobile Profile Header */}
-                                        <div className="flex items-center gap-3 px-4 py-3 mb-2 bg-gradient-to-r from-teal-50 to-blue-50 rounded-xl border border-teal-100">
+                                        <div className="flex items-center gap-3 px-4 py-3 mb-2 bg-gradient-to-r from-purple-50 to-fuchsia-50 rounded-xl border border-purple-100">
                                             <img
                                                 src={doctorAvatar}
                                                 alt="Profile"
-                                                className="h-12 w-12 rounded-full object-cover border-2 border-teal-500"
+                                                className="h-12 w-12 rounded-full object-cover border-2 border-primary"
                                             />
                                             <div>
                                                 <p className="text-sm font-bold text-slate-800">
@@ -195,7 +215,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                         className={cn(
                                             "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors",
                                             location.pathname === item.path
-                                                ? "bg-teal-50 text-teal-700"
+                                                ? "bg-purple-50 text-primary"
                                                 : "text-slate-600 hover:bg-slate-50"
                                         )}
                                     >
@@ -212,7 +232,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                             </button>
                                         </Link>
                                         <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
-                                            <button className="w-full text-left px-4 py-3 rounded-xl text-sm font-medium bg-teal-600 text-white hover:bg-teal-700">
+                                            <button className="w-full text-left px-4 py-3 rounded-xl text-sm font-medium bg-primary text-white hover:bg-primary/90">
                                                 S'inscrire
                                             </button>
                                         </Link>

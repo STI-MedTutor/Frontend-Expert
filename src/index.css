@@ -4,26 +4,26 @@
 @theme {
     --font-sans: "Plus Jakarta Sans", "Inter", sans-serif;
 
-    --color-primary: #0d9488;
-    /* teal-600 */
+    --color-primary: #3f1753;
+    /* Deep Purple from Logo */
     --color-primary-foreground: #ffffff;
 
     --color-secondary: #0f172a;
     /* slate-900 */
     --color-secondary-foreground: #ffffff;
 
-    --color-accent: #2dd4bf;
-    /* teal-400 */
-    --color-accent-foreground: #0f172a;
+    --color-accent: #7c3aed;
+    /* violet-600 */
+    --color-accent-foreground: #ffffff;
 
-    --color-background: #f0fdfa;
-    /* teal-50 */
+    --color-background: #faf5ff;
+    /* purple-50 */
     --color-foreground: #0f172a;
 
     --color-card: rgba(255, 255, 255, 0.7);
     --color-card-foreground: #0f172a;
 
-    --color-border: rgba(13, 148, 136, 0.2);
+    --color-border: rgba(63, 23, 83, 0.2);
 
     --radius-lg: 1rem;
     --radius-md: 0.75rem;
@@ -41,12 +41,12 @@
     }
 
     .text-gradient {
-        @apply bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-blue-600;
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
     }
 }
 
 /* Base Styles */
 body {
-    @apply bg-gradient-to-br from-teal-50 via-white to-blue-50 min-h-screen font-sans text-slate-900 antialiased;
+    @apply bg-gradient-to-br from-purple-50 via-white to-fuchsia-50 min-h-screen font-sans text-slate-900 antialiased;
     background-attachment: fixed;
 }

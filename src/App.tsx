@@ -5,6 +5,8 @@ import ClinicalCases from "./pages/ClinicalCases";
 import ExpertProfile from "./pages/ExpertProfile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import SchoolClinicalCases from "./pages/SchoolClinicalCases";
+import CreateSchoolCase from "./pages/CreateSchoolCase";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/cases" element={<ClinicalCases />} />
+                <Route path="/cas-ecole" element={<SchoolClinicalCases />} />
+                <Route path="/cas-ecole/create" element={<CreateSchoolCase />} />
                 <Route path="/profile" element={<ExpertProfile />} />
               </Routes>
             </Layout>

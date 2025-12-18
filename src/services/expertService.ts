@@ -1,9 +1,9 @@
 // Service Expert Agent - Génération et validation de cas cliniques
 
 import axios from 'axios';
-import { CasClinique, ValidationSynthese } from '../types/models';
+import type { CasClinique, ValidationSynthese } from '../types/models';
 import { EXPERT_ENDPOINTS, CONFIG } from '../constants/api';
-import { ApiError } from './authService';
+import type { ApiError } from './authService';
 
 // ════════════════════════════════════════════════════════════════════
 // AXIOS INSTANCE
@@ -60,7 +60,7 @@ export const expertService = {
   }> {
     try {
       const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Utiliser timeout plus long pour generation de cas (retries LLM possibles)
       const response = await expertApi.post(EXPERT_ENDPOINTS.GENERATE, {
         action: 'generate_case',
@@ -132,6 +132,38 @@ export const expertService = {
       return response.status === 200;
     } catch {
       return false;
+    }
+  },
+  /**
+   * Récupérer les statistiques de l'expert (pour le tableau de bord)
+   */
+  async getExpertStats(expertId: string): Promise<{
+    school_case_activity: number[];
+    school_case_labels: string[];
+    recent_activities: Array<{ text: string; time: string; type: string }>;
+  }> {
+    try {
+      // Note: This endpoint is on the main backend, not the expert agent
+      // We need to use a different axios instance or full URL if they differ.
+      // Assuming EXPERT_ENDPOINTS.EXPERT_BY_ID is correct relative to expertApi's base URL.
+      // Wait, expertApi uses EXPERT_API_URL (port 5001) but expert stats are on Learner_auth_API (port 5004).
+      // We should use userService or a new axios instance for port 5004 calls if expertApi is strictly for the agent.
+      // However, looking at api.ts, EXPERT_API_URL is 5001. BACKEND_ENDPOINTS are for 5004.
+      // Let's check where getExpertStats should really go. It was in expertService.ts before.
+      // If the route is in expert.py (Learner_auth_API), we should use an axios instance pointing to API_BASE_URL (5004).
+
+      // Let's use a direct axios call or import an instance that points to the main backend.
+      // For now, I'll assume I can use the full URL from CONFIG/constants.
+
+      const { API_BASE_URL } = await import('../constants/api');
+      const token = localStorage.getItem('token');
+
+      const response = await axios.get(`${API_BASE_URL}/expert/${expertId}/stats`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data;
+    } catch (error) {
+      throw handleError(error);
     }
   },
 };

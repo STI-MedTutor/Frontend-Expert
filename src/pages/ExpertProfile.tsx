@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
-import { User, Activity, LayoutDashboard, Shield, TrendingUp, Users, FileText, Plus, Loader2, AlertCircle } from "lucide-react";
+import { User, LayoutDashboard, FileText, Plus, Loader2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import doctorAvatar from "../assets/doctor-avatar.png";
 import { userService } from "../services/userService";
 import { useAuth } from "../stores/authStore";
+import { expertService } from "../services/expertService";
+import { clinicalCasesService } from "../services/clinicalCasesService";
 
 export default function ExpertProfile() {
     const { user } = useAuth();
@@ -15,6 +17,13 @@ export default function ExpertProfile() {
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string>("");
     const [successMessage, setSuccessMessage] = useState<string>("");
+    const [stats, setStats] = useState({
+        totalCases: 0,
+        publishedCases: 0,
+        schoolActivity: [] as number[],
+        schoolLabels: [] as string[],
+        recentActivities: [] as any[]
+    });
 
     const expertises = [
         'cardiologie', 'neurologie', 'pneumologie', 'gastro-enterologie', 'nephrologie',
@@ -24,13 +33,40 @@ export default function ExpertProfile() {
     ];
 
     useEffect(() => {
-        const loadProfile = async () => {
+        const loadData = async () => {
             try {
-                const data = await userService.getProfile();
+                // 1. Load Profile
+                const profileData = await userService.getProfile();
                 setProfile({
-                    ...data,
+                    ...profileData,
                     avatar: doctorAvatar
                 });
+
+                // 2. Load Clinical Cases Stats
+                const cases = await clinicalCasesService.getCases();
+                const total = cases.length;
+                // Assuming all fetched cases are 'published' or active for now as we don't have a status field
+                const published = total;
+
+                // 3. Load School Stats (if teacher)
+                let schoolStats: { school_case_activity: number[]; school_case_labels: string[]; recent_activities: any[] } = { school_case_activity: [], school_case_labels: [], recent_activities: [] };
+                // Check both fields for robustness
+                if (profileData.is_enseignant || profileData.is_teacher) {
+                    try {
+                        schoolStats = await expertService.getExpertStats(profileData.id);
+                    } catch (e) {
+                        console.error("Failed to load school stats", e);
+                    }
+                }
+
+                setStats({
+                    totalCases: total,
+                    publishedCases: published,
+                    schoolActivity: schoolStats.school_case_activity || [],
+                    schoolLabels: schoolStats.school_case_labels || [],
+                    recentActivities: schoolStats.recent_activities || []
+                });
+
             } catch (err: any) {
                 setError(err.message || "Erreur lors du chargement du profil");
                 // Fallback to user from auth store if available
@@ -41,7 +77,7 @@ export default function ExpertProfile() {
                 setIsLoading(false);
             }
         };
-        loadProfile();
+        loadData();
     }, [user]);
 
     const handleSaveProfile = async () => {
@@ -73,7 +109,7 @@ export default function ExpertProfile() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-teal-600" />
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
         );
     }
@@ -118,22 +154,24 @@ export default function ExpertProfile() {
                 <div className="flex bg-white/50 p-1 rounded-xl border border-white/60 backdrop-blur-sm">
                     <button
                         onClick={() => setActiveTab("profile")}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "profile"
-                            ? "bg-white text-teal-700 shadow-sm"
-                            : "text-slate-500 hover:text-slate-700"
+                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === "profile"
+                            ? "bg-primary text-white shadow-lg shadow-primary/20"
+                            : "bg-white text-slate-600 hover:bg-slate-50"
                             }`}
                     >
-                        <User className="h-4 w-4" /> Profil
+                        <User className="w-4 h-4" /> Mon Profil
                     </button>
-                    <button
-                        onClick={() => setActiveTab("activity")}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "activity"
-                            ? "bg-white text-teal-700 shadow-sm"
-                            : "text-slate-500 hover:text-slate-700"
-                            }`}
-                    >
-                        <LayoutDashboard className="h-4 w-4" /> Activité
-                    </button>
+                    {(profile?.is_enseignant || profile?.is_teacher) && (
+                        <button
+                            onClick={() => setActiveTab("activity")}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === "activity"
+                                ? "bg-primary text-white shadow-lg shadow-primary/20"
+                                : "bg-white text-slate-600 hover:bg-slate-50"
+                                }`}
+                        >
+                            <LayoutDashboard className="w-4 h-4" /> Activité
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -150,7 +188,7 @@ export default function ExpertProfile() {
                         <div className="lg:col-span-1 space-y-6">
                             <div className="flex flex-col items-center text-center p-8">
                                 <div className="relative mb-6">
-                                    <div className="h-48 w-48 rounded-full p-1 bg-gradient-to-tr from-teal-400 to-emerald-400 shadow-2xl">
+                                    <div className="h-48 w-48 rounded-full p-1 bg-gradient-to-tr from-purple-400 to-fuchsia-400 shadow-2xl">
                                         <img
                                             src={profile.avatar}
                                             alt="Dr. Profile"
@@ -160,21 +198,17 @@ export default function ExpertProfile() {
                                     <div className="absolute bottom-4 right-4 h-6 w-6 bg-green-500 border-4 border-white rounded-full"></div>
                                 </div>
                                 <h2 className="text-3xl font-bold text-slate-900 mb-1">{profile.prenom} {profile.nom}</h2>
-                                <p className="text-teal-600 font-medium text-lg mb-2 capitalize">{profile.domaine_expertise}</p>
+                                <p className="text-primary font-medium text-lg mb-2 capitalize">{profile.domaine_expertise}</p>
                                 <div className="flex flex-col items-center gap-1 mb-6">
                                     <p className="text-slate-600 font-medium">{profile.etablissement}</p>
                                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
                                         {profile.annees_experience} ans d'expérience
                                     </span>
                                 </div>
-                                <div className="flex gap-4 w-full max-w-xs">
-                                    <div className="flex-1 bg-white/40 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/50 shadow-sm">
+                                <div className="flex gap-4 w-full max-w-xs justify-center">
+                                    <div className="flex-1 bg-white/40 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/50 shadow-sm max-w-[150px]">
                                         <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Cas</p>
-                                        <p className="text-2xl font-bold text-slate-800">82</p>
-                                    </div>
-                                    <div className="flex-1 bg-white/40 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/50 shadow-sm">
-                                        <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Avis</p>
-                                        <p className="text-2xl font-bold text-slate-800">4.9</p>
+                                        <p className="text-2xl font-bold text-slate-800">{stats.totalCases}</p>
                                     </div>
                                 </div>
                             </div>
@@ -182,40 +216,40 @@ export default function ExpertProfile() {
 
                         {/* Right Column: Editable Form */}
                         <div className="lg:col-span-2 space-y-6">
-                            <div className="rounded-3xl border border-teal-100/50 bg-white/40 backdrop-blur-xl p-8 shadow-sm">
+                            <div className="rounded-3xl border border-purple-100/50 bg-white/40 backdrop-blur-xl p-8 shadow-sm">
                                 <div className="flex items-center justify-between mb-8">
                                     <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                        <User className="h-5 w-5 text-teal-500" />
+                                        <User className="h-5 w-5 text-primary" />
                                         Informations Personnelles
                                     </h2>
-                                    <span className="text-xs font-medium px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-100">
+                                    <span className="text-xs font-medium px-3 py-1 rounded-full bg-purple-50 text-primary border border-purple-100">
                                         Mode Édition
                                     </span>
                                 </div>
 
                                 <div className="grid gap-6 md:grid-cols-2">
                                     <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-teal-600 transition-colors">Nom</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Nom</label>
                                         <Input
                                             value={profile.nom}
                                             onChange={(e) => setProfile({ ...profile, nom: e.target.value })}
-                                            className="bg-white/60 border-slate-200 focus:border-teal-400 focus:ring-4 focus:ring-teal-500/10 transition-all h-11"
+                                            className="bg-white/60 border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all h-11"
                                         />
                                     </div>
                                     <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-teal-600 transition-colors">Prénom</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Prénom</label>
                                         <Input
                                             value={profile.prenom}
                                             onChange={(e) => setProfile({ ...profile, prenom: e.target.value })}
-                                            className="bg-white/60 border-slate-200 focus:border-teal-400 focus:ring-4 focus:ring-teal-500/10 transition-all h-11"
+                                            className="bg-white/60 border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all h-11"
                                         />
                                     </div>
                                     <div className="space-y-2 group md:col-span-2">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-teal-600 transition-colors">Domaine d'Expertise</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Domaine d'Expertise</label>
                                         <select
                                             value={profile.domaine_expertise}
                                             onChange={(e) => setProfile({ ...profile, domaine_expertise: e.target.value })}
-                                            className="w-full h-11 rounded-md border border-slate-200 bg-white/60 px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-500/10 focus-visible:border-teal-400 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+                                            className="w-full h-11 rounded-md border border-slate-200 bg-white/60 px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/10 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all"
                                         >
                                             {expertises.map(exp => (
                                                 <option key={exp} value={exp}>{exp.charAt(0).toUpperCase() + exp.slice(1).replace('-', ' ')}</option>
@@ -223,53 +257,46 @@ export default function ExpertProfile() {
                                         </select>
                                     </div>
                                     <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-teal-600 transition-colors">Établissement</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Établissement</label>
                                         <Input
                                             value={profile.etablissement}
                                             onChange={(e) => setProfile({ ...profile, etablissement: e.target.value })}
-                                            className="bg-white/60 border-slate-200 focus:border-teal-400 focus:ring-4 focus:ring-teal-500/10 transition-all h-11"
+                                            className="bg-white/60 border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all h-11"
                                         />
                                     </div>
                                     <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-teal-600 transition-colors">Années d'Expérience</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Années d'Expérience</label>
                                         <Input
                                             type="number"
                                             value={profile.annees_experience}
                                             onChange={(e) => setProfile({ ...profile, annees_experience: parseInt(e.target.value) || 0 })}
-                                            className="bg-white/60 border-slate-200 focus:border-teal-400 focus:ring-4 focus:ring-teal-500/10 transition-all h-11"
+                                            className="bg-white/60 border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all h-11"
                                         />
                                     </div>
+                                    <div className="space-y-2 group">
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Statut</label>
+                                        <div className="flex items-center gap-2 h-11 px-3 bg-white/60 border border-slate-200 rounded-md">
+                                            <input
+                                                type="checkbox"
+                                                checked={profile.is_teacher || false}
+                                                onChange={(e) => setProfile({ ...profile, is_teacher: e.target.checked })}
+                                                className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+                                            />
+                                            <span className="text-sm text-slate-700">Enseignant</span>
+                                        </div>
+                                    </div>
                                     <div className="space-y-2 group md:col-span-2">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-teal-600 transition-colors">Email</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Email</label>
                                         <Input
                                             value={profile.email}
                                             onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                                            className="bg-white/60 border-slate-200 focus:border-teal-400 focus:ring-4 focus:ring-teal-500/10 transition-all h-11"
+                                            className="bg-white/60 border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all h-11"
                                         />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="rounded-3xl border border-teal-100/50 bg-white/40 backdrop-blur-xl p-8 shadow-sm">
-                                <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                                    <Shield className="h-5 w-5 text-teal-500" />
-                                    Sécurité
-                                </h2>
-                                <div className="grid gap-6 md:grid-cols-2">
-                                    <div className="space-y-2 group md:col-span-2">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Mot de passe actuel</label>
-                                        <Input type="password" value="........" className="bg-white/60 border-slate-200 focus:border-teal-400 focus:ring-4 focus:ring-teal-500/10 transition-all h-11" />
-                                    </div>
-                                    <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Nouveau mot de passe</label>
-                                        <Input type="password" placeholder="••••••••" className="bg-white/60 border-slate-200 focus:border-teal-400 focus:ring-4 focus:ring-teal-500/10 transition-all h-11" />
-                                    </div>
-                                    <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Confirmer</label>
-                                        <Input type="password" placeholder="••••••••" className="bg-white/60 border-slate-200 focus:border-teal-400 focus:ring-4 focus:ring-teal-500/10 transition-all h-11" />
-                                    </div>
-                                </div>
-                            </div>
+
 
                             <div className="flex justify-end gap-4">
                                 <Button
@@ -280,7 +307,7 @@ export default function ExpertProfile() {
                                     Annuler
                                 </Button>
                                 <Button
-                                    className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white shadow-lg shadow-teal-500/20 border-0"
+                                    className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg shadow-primary/20 border-0"
                                     onClick={handleSaveProfile}
                                     disabled={isSaving}
                                 >
@@ -307,7 +334,7 @@ export default function ExpertProfile() {
                         {/* Stats Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             {[
-                                { label: "Cas Publiés", value: "82", trend: "+2", color: "text-green-600", icon: FileText },
+                                { label: "Cas Publiés", value: stats.publishedCases.toString(), trend: "", color: "text-green-600", icon: FileText },
                             ].map((stat, i) => (
                                 <div key={i} className="rounded-2xl border border-white/60 bg-white/60 backdrop-blur-md p-6 shadow-sm hover:shadow-md transition-shadow">
                                     <div className="flex justify-between items-start mb-2">
@@ -324,88 +351,64 @@ export default function ExpertProfile() {
 
                         {/* Charts Section */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Bar Chart Mock */}
-                            <div className="rounded-3xl border border-white/60 bg-white/60 backdrop-blur-md p-6 shadow-sm">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="font-bold text-slate-800">Cas Cliniques Populaires</h3>
-                                    <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">+8% ce mois</span>
-                                </div>
-                                <div className="h-48 flex items-end justify-between gap-2 px-2">
-                                    {[40, 15, 85, 30, 60].map((h, i) => (
-                                        <div key={i} className="w-full flex flex-col items-center gap-2 group">
-                                            <div
-                                                className="w-full bg-blue-200 rounded-t-lg transition-all duration-500 group-hover:bg-blue-400"
-                                                style={{ height: `${h}%` }}
-                                            />
-                                            <span className="text-xs text-slate-400">
-                                                {["Cardio", "Pneumo", "Neuro", "Gastro", "Trauma"][i]}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Line Chart Mock */}
-                            <div className="rounded-3xl border border-white/60 bg-white/60 backdrop-blur-md p-6 shadow-sm">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="font-bold text-slate-800">Activité des Simulations</h3>
-                                    <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">+15% total</span>
-                                </div>
-                                <div className="h-48 flex items-end relative">
-                                    {/* Simple SVG Line Chart */}
-                                    <svg className="w-full h-full overflow-visible" viewBox="0 0 100 50" preserveAspectRatio="none">
-                                        <path
-                                            d="M0,40 Q10,10 20,25 T40,30 T60,15 T80,35 T100,20"
-                                            fill="none"
-                                            stroke="#3b82f6"
-                                            strokeWidth="2"
-                                            vectorEffect="non-scaling-stroke"
-                                        />
-                                        <path
-                                            d="M0,40 Q10,10 20,25 T40,30 T60,15 T80,35 T100,20 V50 H0 Z"
-                                            fill="url(#gradient)"
-                                            opacity="0.2"
-                                        />
-                                        <defs>
-                                            <linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">
-                                                <stop offset="0%" stopColor="#3b82f6" />
-                                                <stop offset="100%" stopColor="white" stopOpacity="0" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-                                    <div className="absolute bottom-0 w-full flex justify-between text-xs text-slate-400 pt-2">
-                                        <span>Sem 1</span>
-                                        <span>Sem 2</span>
-                                        <span>Sem 3</span>
-                                        <span>Sem 4</span>
+                            {/* Chart: Activités des Cas Cliniques d'École (Visible only for teachers) */}
+                            {(profile?.is_enseignant || profile?.is_teacher) && (
+                                <div className="rounded-3xl border border-white/60 bg-white/60 backdrop-blur-md p-6 shadow-sm">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="font-bold text-slate-800">Activités des Cas Cliniques d'École</h3>
+                                        <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">4 dernières semaines</span>
+                                    </div>
+                                    <div className="h-48 flex items-end relative gap-2">
+                                        {/* Bar Chart Implementation */}
+                                        {stats.schoolActivity.length > 0 ? (
+                                            stats.schoolActivity.map((count, index) => {
+                                                const max = Math.max(...stats.schoolActivity, 1);
+                                                const height = (count / max) * 100;
+                                                return (
+                                                    <div key={index} className="flex-1 flex flex-col justify-end items-center group">
+                                                        <div
+                                                            className="w-full bg-purple-600/20 rounded-t-md relative group-hover:bg-purple-600/30 transition-colors"
+                                                            style={{ height: `${height}%` }}
+                                                        >
+                                                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                {count}
+                                                            </div>
+                                                        </div>
+                                                        <span className="text-xs text-slate-500 mt-2">{stats.schoolLabels[index]}</span>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                                Aucune activité récente
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            )}
 
-                        {/* Activity Feed */}
-                        <div className="rounded-3xl border border-white/60 bg-white/60 backdrop-blur-md p-6 shadow-sm">
-                            <h3 className="font-bold text-slate-800 mb-6">Flux d'Activité et Notifications</h3>
-                            <div className="space-y-4">
-                                {[
-                                    { icon: Plus, color: "bg-blue-100 text-blue-600", text: "Nouveau cas 'Crise d'asthme aiguë' publié.", time: "Il y a 2 heures" },
-                                    { icon: Activity, color: "bg-green-100 text-green-600", text: "Le modèle de tuteur IA a été mis à jour.", time: "Il y a 1 jour" },
-                                    { icon: Shield, color: "bg-yellow-100 text-yellow-600", text: "Taux d'échec élevé détecté sur 'Infarctus'.", time: "Il y a 3 jours" },
-                                    { icon: Users, color: "bg-purple-100 text-purple-600", text: "L'étudiant Alex Martin a complété 50 simulations.", time: "Il y a 5 jours" },
-                                ].map((item, i) => (
-                                    <div key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/50 transition-colors">
-                                        <div className={`h-10 w-10 rounded-full flex items-center justify-center ${item.color}`}>
-                                            <item.icon className="h-5 w-5" />
+                            {/* Activity Feed */}
+                            <div className="rounded-3xl border border-white/60 bg-white/60 backdrop-blur-md p-6 shadow-sm">
+                                <h3 className="font-bold text-slate-800 mb-6">Flux d'Activité et Notifications</h3>
+                                <div className="space-y-4">
+                                    {stats.recentActivities.length > 0 ? (
+                                        stats.recentActivities.map((item, i) => (
+                                            <div key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/50 transition-colors">
+                                                <div className={`h-10 w-10 rounded-full flex items-center justify-center bg-purple-100 text-primary`}>
+                                                    <Plus className="h-5 w-5" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-sm font-medium text-slate-800">{item.text}</p>
+                                                    <p className="text-xs text-slate-500">{item.time}</p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center text-slate-500 py-4">
+                                            Aucune activité récente
                                         </div>
-                                        <div className="flex-1">
-                                            <p className="text-sm font-medium text-slate-800">{item.text}</p>
-                                            <p className="text-xs text-slate-500">{item.time}</p>
-                                        </div>
-                                        <Button variant="ghost" size="icon" className="text-slate-400">
-                                            <TrendingUp className="h-4 w-4 rotate-45" />
-                                        </Button>
-                                    </div>
-                                ))}
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </motion.div>

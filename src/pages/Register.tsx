@@ -29,6 +29,7 @@ export default function Register() {
                 etablissement: (formData.get('etablissement') as string) || undefined,
                 annees_experience: formData.get('experience') ?
                     parseInt(formData.get('experience') as string) : undefined,
+                is_teacher: formData.get('is_teacher') === 'on',
             });
             navigate('/');
         } catch (err: any) {
@@ -49,7 +50,7 @@ export default function Register() {
                     transition={{ duration: 0.5 }}
                 >
                     <div className="space-y-2">
-                        <Link to="/" className="flex items-center gap-2 text-teal-600 font-bold text-xl mb-8">
+                        <Link to="/" className="flex items-center gap-2 text-primary font-bold text-xl mb-8">
                             <Stethoscope className="h-6 w-6" />
                             <span>MedExpert</span>
                         </Link>
@@ -141,7 +142,7 @@ export default function Register() {
                                 <select
                                     id="expertise"
                                     name="expertise"
-                                    className="w-full h-11 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:border-teal-500 disabled:cursor-not-allowed disabled:opacity-50 transition-all focus:bg-white"
+                                    className="w-full h-11 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all focus:bg-white"
                                     required
                                 >
                                     {[
@@ -183,9 +184,24 @@ export default function Register() {
                             </div>
                         </div>
 
+                        <div className="flex items-center space-x-2 my-4">
+                            <input
+                                type="checkbox"
+                                id="is_teacher"
+                                name="is_teacher"
+                                className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary cursor-pointer"
+                            />
+                            <label
+                                htmlFor="is_teacher"
+                                className="text-sm font-medium leading-none text-slate-700 cursor-pointer select-none"
+                            >
+                                Je suis enseignant
+                            </label>
+                        </div>
+
                         <Button
                             type="submit"
-                            className="w-full h-11 text-base bg-teal-600 hover:bg-teal-700 shadow-lg shadow-teal-500/20"
+                            className="w-full h-11 text-base bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
                             disabled={isLoading}
                         >
                             {isLoading ? (
@@ -211,7 +227,7 @@ export default function Register() {
 
                     <p className="text-center text-sm text-slate-600">
                         Déjà un compte ?{" "}
-                        <Link to="/login" className="font-semibold text-teal-600 hover:underline">
+                        <Link to="/login" className="font-semibold text-primary hover:underline">
                             Se connecter
                         </Link>
                     </p>
@@ -220,7 +236,7 @@ export default function Register() {
 
             {/* Right Side - Image */}
             <div className="hidden lg:block relative bg-slate-900 h-full">
-                <div className="absolute inset-0 bg-teal-900/20 mix-blend-overlay z-10" />
+                <div className="absolute inset-0 bg-primary/20 mix-blend-overlay z-10" />
                 <img
                     src={authBg}
                     alt="Medical Background"
