@@ -5,11 +5,13 @@ import { motion } from 'framer-motion';
 import { casEcoleService } from '../services/casEcoleService';
 import { authService } from '../services/authService';
 import type { CasEcole } from '../types/casEcole';
+import { useToast } from '../stores/toastStore';
 
 export default function SchoolClinicalCases() {
     const navigate = useNavigate();
     const [cases, setCases] = useState<CasEcole[]>([]);
     const [loading, setLoading] = useState(true);
+    const toast = useToast();
 
     useEffect(() => {
         loadData();
@@ -19,14 +21,10 @@ export default function SchoolClinicalCases() {
         try {
             setLoading(true);
             const user = await authService.getCurrentUser();
-
-            // Si l'utilisateur est un expert, on filtre par son ID (optionnel selon règles métier)
-            // Ici on récupère tout pour l'instant, le backend filtre déjà si besoin
-            const data = await casEcoleService.getAllCasEcole(parseInt(user.id));
+            const data = await casEcoleService.getAllCasEcole(user.id);
             setCases(data);
         } catch (err) {
             console.error(err);
-            // Removed setError, so no longer setting error state
         } finally {
             setLoading(false);
         }
@@ -36,21 +34,23 @@ export default function SchoolClinicalCases() {
         try {
             const updatedCase = await casEcoleService.toggleActif(id);
             setCases(cases.map(c => c.id === id ? updatedCase : c));
+            toast.success(updatedCase.actif ? "Cas activé" : "Cas désactivé");
         } catch (err) {
             console.error(err);
-            // Optionnel: afficher toast erreur
+            toast.error("Erreur lors du changement d'état");
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce cas d'école ?")) return;
-
-        try {
-            await casEcoleService.deleteCasEcole(id);
-            setCases(cases.filter(c => c.id !== id));
-        } catch (err) {
-            console.error(err);
-            alert("Erreur lors de la suppression");
+    const handleDeleteClick = async (id: string) => {
+        if (window.confirm("Voulez-vous vraiment supprimer ce cas d'école ?")) {
+            try {
+                await casEcoleService.deleteCasEcole(id);
+                setCases(cases.filter(c => c.id !== id));
+                toast.success("Cas d'école supprimé");
+            } catch (err) {
+                console.error(err);
+                toast.error("Erreur lors de la suppression");
+            }
         }
     };
 
@@ -83,8 +83,6 @@ export default function SchoolClinicalCases() {
                     </div>
                 </div>
 
-                {/* Removed error display block */}
-
                 {/* Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {cases.map((cas, index) => (
@@ -112,7 +110,7 @@ export default function SchoolClinicalCases() {
                                         {cas.actif ? <ToggleRight size={18} className="text-green-600" /> : <ToggleLeft size={18} />}
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(cas.id)}
+                                        onClick={() => handleDeleteClick(cas.id)}
                                         className="p-2 bg-white/90 backdrop-blur-sm text-slate-600 hover:text-red-600 rounded-full shadow-sm border border-slate-100 transition-all"
                                         title="Supprimer"
                                     >
@@ -198,8 +196,6 @@ export default function SchoolClinicalCases() {
                     )}
                 </div>
             </div>
-
-            {/* Removed LoadCaseModal component */}
         </div>
     );
 }

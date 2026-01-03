@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Filter, MoreHorizontal, FileText, Activity,
-  Edit2, Check, X, AlertCircle, Download, Plus, Trash2
+  Edit2, Check, X, AlertCircle, Download, Plus
 } from 'lucide-react';
 import type { ClinicalCase } from '../../types/clinicalCase';
 import { clinicalCasesService } from '../../services/clinicalCasesService';
@@ -12,6 +12,7 @@ import { DOMAINES_EXPERTISE_LIST } from '../../constants/api';
 import { useToast } from '../../stores/toastStore';
 import { useAuth } from '../../stores/authStore';
 import ClinicalCaseModal from './ClinicalCaseModal';
+import RejectionModal from './RejectionModal';
 
 export default function ClinicalCasesTable() {
   const { user } = useAuth();
@@ -20,6 +21,9 @@ export default function ClinicalCasesTable() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCase, setSelectedCase] = useState<ClinicalCase | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
+  const [caseToReject, setCaseToReject] = useState<ClinicalCase | null>(null);
+  const [filterStatus, setFilterStatus] = useState<string>('pending'); // Default to pending
 
   // Filtres
   const [showFilters, setShowFilters] = useState(false);
@@ -114,15 +118,48 @@ export default function ClinicalCasesTable() {
     }
   };
 
-  const handleDeleteCase = async (id: string) => {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer ce cas clinique ?`)) return;
+  const handleDeleteClick = (c: ClinicalCase) => {
+    setCaseToReject(c);
+    setIsRejectionModalOpen(true);
+  };
 
+  const handleApprove = async (id: string) => {
+    if (!user) return;
     try {
-      await clinicalCasesService.deleteCase(id);
-      setCases(prev => prev.filter(c => c.id !== id));
-      toast.success("Cas supprimé avec succès");
+      await clinicalCasesService.approveCase(id, user.id, user.domaine_expertise || 'autre');
+      setCases(prev => prev.map(c => c.id === id ? { ...c, approval_status: 'approved' } : c));
+      toast.success("Cas approuvé avec succès");
     } catch (error) {
-      toast.error("Erreur lors de la suppression");
+      toast.error("Erreur lors de l'approbation");
+    }
+  };
+
+  const handleReject = async (reason: string, rejectedElements: string[]) => {
+    if (!caseToReject || !user) return;
+    try {
+      await clinicalCasesService.rejectCase(caseToReject.id, user.id, user.domaine_expertise || 'autre', reason, rejectedElements);
+      setCases(prev => prev.map(c => c.id === caseToReject.id ? {
+        ...c,
+        approval_status: 'rejected',
+        rejection_reason: reason,
+        rejected_elements: rejectedElements
+      } : c));
+      toast.success("Cas rejeté avec succès");
+      setIsRejectionModalOpen(false);
+      setCaseToReject(null);
+    } catch (error) {
+      toast.error("Erreur lors du rejet");
+    }
+  };
+
+  const handleSetInProgress = async (id: string) => {
+    if (!user) return;
+    try {
+      await clinicalCasesService.setInProgress(id, user.id, user.domaine_expertise || 'autre');
+      setCases(prev => prev.map(c => c.id === id ? { ...c, approval_status: 'pending' } : c));
+      toast.success("Cas mis en cours");
+    } catch (error) {
+      toast.error("Erreur lors de la mise en cours");
     }
   };
 
@@ -246,6 +283,12 @@ export default function ClinicalCasesTable() {
     );
   });
 
+  const finalFilteredCases = filteredCases.filter(c => {
+    if (filterStatus === 'all') return true;
+    if (filterStatus === 'pending') return !c.approval_status || c.approval_status === 'pending';
+    return c.approval_status === filterStatus;
+  });
+
   const getNiveauBadge = (niveau?: string) => {
     switch (niveau) {
       case 'debutant':
@@ -298,10 +341,36 @@ export default function ClinicalCasesTable() {
             >
               <Filter className="w-4 h-4" />
               Filtres
-              {(filterPathologie || filterNiveau || filterAgeGroup || filterGender) && (
+              {(filterPathologie || filterNiveau || filterAgeGroup || filterGender || filterStatus !== 'pending') && (
                 <span className="w-2 h-2 bg-primary rounded-full" />
               )}
             </button>
+            <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+              <button
+                onClick={() => setFilterStatus('pending')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterStatus === 'pending' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                En attente
+              </button>
+              <button
+                onClick={() => setFilterStatus('approved')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterStatus === 'approved' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Approuvés
+              </button>
+              <button
+                onClick={() => setFilterStatus('rejected')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterStatus === 'rejected' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Rejetés
+              </button>
+              <button
+                onClick={() => setFilterStatus('all')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterStatus === 'all' ? 'bg-white text-slate-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Tous
+              </button>
+            </div>
             {user?.is_teacher && (
               <button
                 onClick={() => {
@@ -435,14 +504,14 @@ export default function ClinicalCasesTable() {
               <AnimatePresence>
                 {isLoading ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                    <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
                       <div className="flex justify-center items-center gap-3">
                         <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                         Chargement des données...
                       </div>
                     </td>
                   </tr>
-                ) : filteredCases.map((c) => (
+                ) : finalFilteredCases.map((c) => (
                   <motion.tr
                     key={c.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -591,23 +660,63 @@ export default function ClinicalCasesTable() {
                           </>
                         ) : (
                           <>
-                            <button
-                              onClick={() => handleEditClick(c)}
-                              className="p-2 text-slate-400 hover:text-primary hover:bg-purple-50 rounded-lg transition-all"
-                              title="Modification rapide"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteCase(c.id)}
-                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                              title="Supprimer"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            {/* Action Icons & Edit - Only shown if no status is set */}
+                            {!c.approval_status && (
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() => handleApprove(c.id)}
+                                  className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100"
+                                  title="Approuver"
+                                >
+                                  <Check className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleSetInProgress(c.id)}
+                                  className="p-2 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all border border-amber-100"
+                                  title="Mettre en cours"
+                                >
+                                  <Activity className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteClick(c)}
+                                  className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all border border-red-100"
+                                  title="Rejeter"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleEditClick(c)}
+                                  className="p-2 text-slate-400 hover:text-primary hover:bg-purple-50 rounded-lg transition-all ml-1 border-l border-slate-200 pl-2"
+                                  title="Modification rapide"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Status Badges - Shown once an action is taken */}
+                            {c.approval_status === 'approved' && (
+                              <span className="px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold border border-emerald-200 flex items-center gap-1.5">
+                                <Check className="w-3.5 h-3.5" />
+                                Approuvé
+                              </span>
+                            )}
+                            {c.approval_status === 'pending' && (
+                              <span className="px-3 py-1.5 bg-amber-100 text-amber-700 rounded-lg text-xs font-bold border border-amber-200 flex items-center gap-1.5">
+                                <Activity className="w-3.5 h-3.5" />
+                                En cours
+                              </span>
+                            )}
+                            {c.approval_status === 'rejected' && (
+                              <span className="px-3 py-1.5 bg-red-100 text-red-700 rounded-lg text-xs font-bold border border-red-200 flex items-center gap-1.5" title={c.rejection_reason}>
+                                <X className="w-3.5 h-3.5" />
+                                Rejeté
+                              </span>
+                            )}
+
                             <button
                               onClick={() => openFullModal(c)}
-                              className="flex items-center gap-2 px-3 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-primary hover:text-white transition-all text-xs font-bold"
+                              className="flex items-center gap-2 px-3 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-primary hover:text-white transition-all text-xs font-bold ml-1"
                             >
                               Détails
                               <MoreHorizontal className="w-4 h-4" />
@@ -625,7 +734,7 @@ export default function ClinicalCasesTable() {
 
         {/* Footer / Pagination */}
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
-          <span className="text-sm text-slate-500">Affichage de {filteredCases.length} cas</span>
+          <span className="text-sm text-slate-500">Affichage de {finalFilteredCases.length} cas</span>
           <div className="flex gap-2">
             <button className="px-3 py-1 text-sm border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50">Précédent</button>
             <button className="px-3 py-1 text-sm border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50">Suivant</button>
@@ -651,6 +760,16 @@ export default function ClinicalCasesTable() {
           loadCases();
           setIsModalOpen(false);
         }}
+      />
+
+      <RejectionModal
+        isOpen={isRejectionModalOpen}
+        onClose={() => {
+          setIsRejectionModalOpen(false);
+          setCaseToReject(null);
+        }}
+        onConfirm={handleReject}
+        caseTitle={caseToReject?.patient ? `${caseToReject.patient.first_name} ${caseToReject.patient.last_name}` : 'Cas sans nom'}
       />
     </div>
   );

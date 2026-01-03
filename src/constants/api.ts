@@ -34,6 +34,9 @@ export const EXPERT_ENDPOINTS = {
   GENERATE: '/generate',
   VALIDATE_DIAGNOSTIC: '/validate_diagnostic',
   END_SESSION: '/end_session',
+  APPROVE_CASE: (id: string) => `/cases/${id}/validate`,
+  REJECT_CASE: (id: string) => `/cases/${id}/reject`,
+  IN_PROGRESS_CASE: (id: string) => `/cases/${id}/set-status`,
 };
 
 // Configuration

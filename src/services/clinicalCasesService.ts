@@ -180,6 +180,112 @@ class ClinicalCasesService {
             return [];
         }
     }
+
+    async approveCase(id: string, expertId: string, expertDomaine: string, comment?: string): Promise<any> {
+        try {
+            const response = await fetch(`${EXPERT_API_URL}${EXPERT_ENDPOINTS.APPROVE_CASE(id)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    expert_id: expertId,
+                    expert_domaine: expertDomaine,
+                    notes: comment
+                }),
+            });
+
+            let data;
+            try {
+                data = await response.json();
+            } catch (e) {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                throw new Error('Erreur de réponse du serveur');
+            }
+
+            if (!response.ok || data.status === 'error') {
+                throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            return data;
+        } catch (error) {
+            console.error(`[ClinicalCasesService] Erreur approveCase(${id}):`, error);
+            throw error;
+        }
+    }
+
+    async rejectCase(id: string, expertId: string, expertDomaine: string, reason: string, rejectedParts: string[]): Promise<any> {
+        try {
+            const response = await fetch(`${EXPERT_API_URL}${EXPERT_ENDPOINTS.REJECT_CASE(id)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    expert_id: expertId,
+                    expert_domaine: expertDomaine,
+                    rejection_reason: reason,
+                    rejection_parts: rejectedParts
+                }),
+            });
+
+            let data;
+            try {
+                data = await response.json();
+            } catch (e) {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                throw new Error('Erreur de réponse du serveur');
+            }
+
+            if (!response.ok || data.status === 'error') {
+                throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            return data;
+        } catch (error) {
+            console.error(`[ClinicalCasesService] Erreur rejectCase(${id}):`, error);
+            throw error;
+        }
+    }
+
+    async setInProgress(id: string, expertId: string, expertDomaine: string): Promise<any> {
+        try {
+            const response = await fetch(`${EXPERT_API_URL}${EXPERT_ENDPOINTS.IN_PROGRESS_CASE(id)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    expert_id: expertId,
+                    expert_domaine: expertDomaine,
+                    status: 'in_progress'
+                }),
+            });
+
+            let data;
+            try {
+                data = await response.json();
+            } catch (e) {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                throw new Error('Erreur de réponse du serveur');
+            }
+
+            if (!response.ok || data.status === 'error') {
+                throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            return data;
+        } catch (error) {
+            console.error(`[ClinicalCasesService] Erreur setInProgress(${id}):`, error);
+            throw error;
+        }
+    }
 }
 
 export const clinicalCasesService = new ClinicalCasesService();

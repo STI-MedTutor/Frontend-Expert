@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
-import { User, Activity, Menu, X, LogOut, GraduationCap } from "lucide-react";
+import { User, Activity, Menu, X, LogOut, GraduationCap, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../stores/authStore";
@@ -9,7 +9,7 @@ import doctorAvatar from "../../assets/doctor-avatar.png";
 export default function Layout({ children }: { children: React.ReactNode }) {
     const location = useLocation();
     const navigate = useNavigate();
-    const { isAuthenticated, user, logout } = useAuth();
+    const { isAuthenticated, user, userType, logout } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
@@ -51,6 +51,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             name: "Cas clinique d'école",
             path: "/cas-ecole",
             icon: GraduationCap,
+        }] : []),
+        ...(userType === 'gerant' ? [{
+            name: "Administration",
+            path: "/admin",
+            icon: Shield,
         }] : []),
         {
             name: "Profil Expert",
@@ -101,6 +106,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             >
                                 <GraduationCap className="h-4 w-4" />
                                 Cas clinique d'école
+                            </Link>
+                        )}
+                        {isAuthenticated && userType === 'gerant' && (
+                            <Link
+                                to="/admin"
+                                className={cn(
+                                    "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
+                                    location.pathname.startsWith("/admin")
+                                        ? "text-indigo-600 bg-indigo-50"
+                                        : "text-slate-600 hover:text-indigo-600 hover:bg-slate-50"
+                                )}
+                            >
+                                <Shield className="h-4 w-4" />
+                                Administration
                             </Link>
                         )}
 

@@ -168,4 +168,7 @@ export interface ClinicalCase {
     bill_items?: BillItem[];
     appointments?: Appointment[];
     metadata?: CaseMetadata;
+    approval_status?: 'approved' | 'rejected' | 'pending';
+    rejection_reason?: string;
+    rejected_elements?: string[];
 }

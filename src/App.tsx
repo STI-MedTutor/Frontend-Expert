@@ -7,7 +7,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import SchoolClinicalCases from "./pages/SchoolClinicalCases";
 import CreateSchoolCase from "./pages/CreateSchoolCase";
-
 function App() {
   return (
     <Router>
