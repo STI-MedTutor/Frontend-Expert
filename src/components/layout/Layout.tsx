@@ -89,7 +89,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 Gestion Cas Cliniques
                             </Link>
                         )}
-                        {isAuthenticated && (user?.is_teacher || user?.is_enseignant) && (
+                        {isAuthenticated && (!!user?.is_teacher || !!user?.is_enseignant) && (
                             <Link
                                 to="/cas-ecole"
                                 className={cn(

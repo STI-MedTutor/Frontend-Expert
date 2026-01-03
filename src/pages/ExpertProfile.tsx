@@ -59,6 +59,9 @@ export default function ExpertProfile() {
                     }
                 }
 
+                console.log("Expert Profile Data:", profileData);
+                console.log("Expert Stats Data:", schoolStats);
+
                 setStats({
                     totalCases: total,
                     publishedCases: published,
@@ -95,6 +98,7 @@ export default function ExpertProfile() {
                 domaine_expertise: profile.domaine_expertise,
                 etablissement: profile.etablissement,
                 annees_experience: profile.annees_experience,
+                is_enseignant: profile.is_enseignant,
             });
             setProfile({ ...updated, avatar: doctorAvatar });
             setSuccessMessage("Profil mis à jour avec succès!");
@@ -278,8 +282,8 @@ export default function ExpertProfile() {
                                         <div className="flex items-center gap-2 h-11 px-3 bg-white/60 border border-slate-200 rounded-md">
                                             <input
                                                 type="checkbox"
-                                                checked={profile.is_teacher || false}
-                                                onChange={(e) => setProfile({ ...profile, is_teacher: e.target.checked })}
+                                                checked={profile.is_enseignant || false}
+                                                onChange={(e) => setProfile({ ...profile, is_enseignant: e.target.checked })}
                                                 className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
                                             />
                                             <span className="text-sm text-slate-700">Enseignant</span>
@@ -367,8 +371,8 @@ export default function ExpertProfile() {
                                                 return (
                                                     <div key={index} className="flex-1 flex flex-col justify-end items-center group">
                                                         <div
-                                                            className="w-full bg-purple-600/20 rounded-t-md relative group-hover:bg-purple-600/30 transition-colors"
-                                                            style={{ height: `${height}%` }}
+                                                            className="w-full bg-primary/40 rounded-t-md relative group-hover:bg-primary/60 transition-colors shadow-sm"
+                                                            style={{ height: `${height}%`, minHeight: count > 0 ? '4px' : '0' }}
                                                         >
                                                             <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                                                                 {count}

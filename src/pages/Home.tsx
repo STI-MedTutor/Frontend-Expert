@@ -1,6 +1,6 @@
 import { Button } from "../components/ui/Button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Activity, ShieldCheck, Users, Sparkles } from "lucide-react";
+import { ArrowRight, Activity, ShieldCheck, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import heroImage from "../assets/patient2.png";
 
@@ -32,7 +32,7 @@ export default function Home() {
                 >
                     {/* Decorative Elements */}
                     <div className="absolute -top-20 -left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl -z-10 animate-pulse" />
-{/* Badge 
+                    {/* Badge 
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 backdrop-blur-sm border border-white/60 text-primary text-sm font-medium shadow-sm">
                         <Sparkles className="w-4 h-4" />
                         <span>Nouvelle version disponible</span>

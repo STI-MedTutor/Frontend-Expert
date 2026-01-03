@@ -7,7 +7,7 @@ export interface CasEcole {
     ecole_nom: string;
     classe_id: number;
     classe_nom: string;
-    professeur_id: number;
+    professeur_id: string;
     professeur_nom: string;
     professeur_email: string;
     cas_clinique: ClinicalCase;
@@ -23,7 +23,7 @@ export interface CreateCasEcolePayload {
     ecole_nom: string;
     classe_id: number;
     classe_nom: string;
-    professeur_id: number;
+    professeur_id: string;
     professeur_nom: string;
     professeur_email: string;
     cas_clinique: ClinicalCase;
@@ -38,7 +38,7 @@ export interface CreateCasEcoleFromFultangPayload {
     ecole_nom: string;
     classe_id: number;
     classe_nom: string;
-    professeur_id: number;
+    professeur_id: string;
     professeur_nom: string;
     professeur_email: string;
     temps_limite_minutes: number;

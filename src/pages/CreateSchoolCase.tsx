@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     ArrowLeft, Save, Search, Filter, Clock, AlertTriangle,
     CheckCircle, GraduationCap, Users, ChevronRight, ChevronLeft, FileText,
-    X, User, Activity, Stethoscope, TestTube, Pill, Building2, Tag, Calendar, Receipt, Plus, Trash2
+    X, User, Activity, Stethoscope, TestTube, Pill, Building2, Tag, Plus, Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { casEcoleService } from '../services/casEcoleService';
 import { clinicalCasesService } from '../services/clinicalCasesService';
 import { authService } from '../services/authService';
 import { DOMAINES_EXPERTISE_LIST } from '../constants/api';
-import type { CasEcole } from '../types/casEcole';
+
 import type { ClinicalCase, ExamRequest, Prescription, Hospitalisation } from '../types/clinicalCase';
 
 export default function CreateSchoolCase() {

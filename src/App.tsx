@@ -26,6 +26,7 @@ function App() {
                 <Route path="/cases" element={<ClinicalCases />} />
                 <Route path="/cas-ecole" element={<SchoolClinicalCases />} />
                 <Route path="/cas-ecole/create" element={<CreateSchoolCase />} />
+                <Route path="/cas-ecole/edit/:id" element={<CreateSchoolCase />} />
                 <Route path="/profile" element={<ExpertProfile />} />
               </Routes>
             </Layout>

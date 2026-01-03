@@ -16,7 +16,7 @@ export const casEcoleService = {
     /**
      * Récupérer tous les cas d'école
      */
-    async getAllCasEcole(professeurId?: number): Promise<CasEcole[]> {
+    async getAllCasEcole(professeurId?: string): Promise<CasEcole[]> {
         try {
             const params = professeurId ? { professeur_id: professeurId } : {};
             const response = await api.get(EXPERT_ENDPOINTS.CAS_ECOLE, { params });

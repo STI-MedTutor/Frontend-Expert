@@ -141,6 +141,7 @@ export interface CaseMetadata {
     domaine?: string;
     niveau_complexite: 'debutant' | 'intermediaire' | 'avance';
     preuve_integrite?: string;
+    cas_type?: 'clinique' | 'ecole';
 }
 
 // Type complet du cas clinique (conforme à fultang.json)

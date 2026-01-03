@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, School, Clock, Trash2, BookOpen, ToggleLeft, ToggleRight, Calendar, Award, Users, ChevronRight } from 'lucide-react';
+import { Plus, School, Clock, Trash2, BookOpen, ToggleLeft, ToggleRight, Calendar, Award, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { casEcoleService } from '../services/casEcoleService';
 import { authService } from '../services/authService';
@@ -98,8 +98,8 @@ export default function SchoolClinicalCases() {
                             {/* Status Badge & Actions Overlay */}
                             <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
                                 <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${cas.actif
-                                        ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
-                                        : 'bg-slate-400 text-white shadow-lg shadow-slate-400/20'
+                                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
+                                    : 'bg-slate-400 text-white shadow-lg shadow-slate-400/20'
                                     }`}>
                                     {cas.actif ? 'Actif' : 'Brouillon'}
                                 </div>

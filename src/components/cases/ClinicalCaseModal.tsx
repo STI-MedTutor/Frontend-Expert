@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, Activity, FileText, Stethoscope, Save, AlertTriangle, TestTube, Pill, Building2, Receipt, Calendar, Tag } from 'lucide-react';
+import { X, User, Activity, FileText, Stethoscope, Save, AlertTriangle, TestTube, Pill, Building2, Calendar, Tag } from 'lucide-react';
 import type { ClinicalCase } from '../../types/clinicalCase';
 
 interface ClinicalCaseModalProps {
@@ -61,7 +61,12 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
   const updateMetadata = (field: string, value: any) => {
     setFormData(prev => prev ? ({
       ...prev,
-      metadata: { ...(prev.metadata || {}), [field]: value }
+      metadata: {
+        pathologie: '',
+        niveau_complexite: 'debutant',
+        ...(prev.metadata || {}),
+        [field]: value
+      }
     }) : null);
   };
 

@@ -9,6 +9,7 @@ export interface UpdateUserData {
     domaine_expertise?: string;
     etablissement?: string;
     annees_experience?: number;
+    is_enseignant?: boolean;
 }
 
 export interface UserStats {
@@ -80,6 +81,7 @@ class UserService {
             if (data.domaine_expertise) backendData.domaine_expertise = data.domaine_expertise;
             if (data.etablissement) backendData.etablissement = data.etablissement;
             if (data.annees_experience !== undefined) backendData.annees_experience = data.annees_experience;
+            if (data.is_enseignant !== undefined) backendData.is_enseignant = data.is_enseignant;
 
             const response = await fetchAPI<{ message: string; expert: User }>(BACKEND_ENDPOINTS.EXPERT_BY_ID(userId), {
                 method: 'PUT',

@@ -156,7 +156,7 @@ export const expertService = {
       // For now, I'll assume I can use the full URL from CONFIG/constants.
 
       const { API_BASE_URL } = await import('../constants/api');
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
 
       const response = await axios.get(`${API_BASE_URL}/expert/${expertId}/stats`, {
         headers: { Authorization: `Bearer ${token}` }

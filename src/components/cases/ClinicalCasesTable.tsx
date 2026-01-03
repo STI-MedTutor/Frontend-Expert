@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Filter, MoreHorizontal, FileText, Activity,
-  User, Calendar, ChevronDown, Edit2, Check, X, AlertCircle, Download, Plus, Trash2, Tag
+  Edit2, Check, X, AlertCircle, Download, Plus, Trash2
 } from 'lucide-react';
 import type { ClinicalCase } from '../../types/clinicalCase';
 import { clinicalCasesService } from '../../services/clinicalCasesService';
@@ -26,7 +26,11 @@ export default function ClinicalCasesTable() {
   const [filterPathologie, setFilterPathologie] = useState('');
   const [filterNiveau, setFilterNiveau] = useState('');
   const [availablePathologies, setAvailablePathologies] = useState<string[]>([]);
-  const [availableNiveaux, setAvailableNiveaux] = useState<string[]>([]);
+
+
+  // Nouveaux filtres
+  const [filterAgeGroup, setFilterAgeGroup] = useState<string>('');
+  const [filterGender, setFilterGender] = useState<string>('');
 
   // Inline Editing State
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -62,12 +66,10 @@ export default function ClinicalCasesTable() {
 
   const loadFilters = async () => {
     try {
-      const [pathologies, niveaux] = await Promise.all([
+      const [pathologies] = await Promise.all([
         clinicalCasesService.getAvailablePathologies(),
-        clinicalCasesService.getAvailableNiveaux()
       ]);
       setAvailablePathologies(pathologies);
-      setAvailableNiveaux(niveaux);
     } catch (err) {
       console.error('Erreur chargement filtres:', err);
     }
@@ -129,17 +131,72 @@ export default function ClinicalCasesTable() {
     setIsModalOpen(true);
   };
 
-  const handleDownloadJson = () => {
-    const jsonString = JSON.stringify(cases, null, 2);
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "clinical_cases.json";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success("Fichier JSON téléchargé");
+  const handleDownloadJson = async () => {
+    try {
+      toast.success("Préparation du téléchargement...");
+      // Récupérer tous les cas sans filtres
+      const allCases = await clinicalCasesService.getCases();
+      const jsonString = JSON.stringify(allCases, null, 2);
+      const blob = new Blob([jsonString], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "tous_les_cas_cliniques.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Fichier JSON téléchargé (tous les cas)");
+    } catch (error) {
+      console.error("Erreur export JSON:", error);
+      toast.error("Erreur lors de l'export JSON");
+    }
+  };
+
+  const handleDownloadCSV = async () => {
+    try {
+      toast.success("Préparation du CSV...");
+      const allCases = await clinicalCasesService.getCases();
+
+      const headers = [
+        "ID", "Patient Prénom", "Patient Nom", "Age", "Sexe",
+        "Motif", "Diagnostic", "Domaine", "Pathologie", "Niveau", "Type"
+      ];
+
+      const csvContent = [
+        headers.join(","),
+        ...allCases.map(c => {
+          const age = c.patient?.birth_date
+            ? new Date().getFullYear() - new Date(c.patient.birth_date).getFullYear()
+            : '';
+          return [
+            `"${c.id}"`,
+            `"${c.patient?.first_name || ''}"`,
+            `"${c.patient?.last_name || ''}"`,
+            `"${age}"`,
+            `"${c.patient?.gender || ''}"`,
+            `"${c.consultation_reason?.replace(/"/g, '""') || ''}"`,
+            `"${c.medical_folder_page?.diagnostic?.replace(/"/g, '""') || ''}"`,
+            `"${c.metadata?.domaine || ''}"`,
+            `"${c.metadata?.pathologie || ''}"`,
+            `"${c.metadata?.niveau_complexite || ''}"`,
+            `"${c.metadata?.cas_type || 'clinique'}"`
+          ].join(",");
+        })
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "tous_les_cas_cliniques.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Fichier CSV téléchargé");
+    } catch (error) {
+      console.error("Erreur export CSV:", error);
+      toast.error("Erreur lors de l'export CSV");
+    }
   };
 
   const filteredCases = cases.filter(c => {
@@ -158,6 +215,27 @@ export default function ClinicalCasesTable() {
       caseDomain === userDomain;
 
     if (!isVisibleByDomain) return false;
+
+
+
+    // Filtre par Tranche d'âge
+    if (filterAgeGroup) {
+      if (!c.patient?.birth_date) return false;
+      const age = new Date().getFullYear() - new Date(c.patient.birth_date).getFullYear();
+
+      switch (filterAgeGroup) {
+        case 'enfant': if (age >= 12) return false; break; // < 12
+        case 'adolescent': if (age < 12 || age >= 18) return false; break; // 12-17
+        case 'adulte': if (age < 18) return false; break; // >= 18
+        case 'mineur': if (age >= 18) return false; break; // < 18
+        case 'majeur': if (age < 18) return false; break; // >= 18
+      }
+    }
+
+    // Filtre par Sexe
+    if (filterGender) {
+      if (c.patient?.gender !== filterGender) return false;
+    }
 
     // Filtres de recherche existants
     return (
@@ -198,6 +276,13 @@ export default function ClinicalCasesTable() {
           </div>
           <div className="flex gap-2 flex-wrap">
             <button
+              onClick={handleDownloadCSV}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors font-medium"
+            >
+              <FileText className="w-4 h-4" />
+              CSV
+            </button>
+            <button
               onClick={handleDownloadJson}
               className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors font-medium"
             >
@@ -213,7 +298,7 @@ export default function ClinicalCasesTable() {
             >
               <Filter className="w-4 h-4" />
               Filtres
-              {(filterPathologie || filterNiveau) && (
+              {(filterPathologie || filterNiveau || filterAgeGroup || filterGender) && (
                 <span className="w-2 h-2 bg-primary rounded-full" />
               )}
             </button>
@@ -275,9 +360,42 @@ export default function ClinicalCasesTable() {
                     <option value="avance">🔴 Avancé</option>
                   </select>
                 </div>
-                {(filterPathologie || filterNiveau) && (
+
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium text-slate-500">Age:</label>
+                  <select
+                    value={filterAgeGroup}
+                    onChange={(e) => setFilterAgeGroup(e.target.value)}
+                    className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                  >
+                    <option value="">Tous</option>
+                    <option value="enfant">Enfant (&lt;12)</option>
+                    <option value="adolescent">Adolescent (12-17)</option>
+                    <option value="adulte">Adulte (18+)</option>
+                    <option value="mineur">Mineur (&lt;18)</option>
+                    <option value="majeur">Majeur (18+)</option>
+                  </select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium text-slate-500">Sexe:</label>
+                  <select
+                    value={filterGender}
+                    onChange={(e) => setFilterGender(e.target.value)}
+                    className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                  >
+                    <option value="">Tous</option>
+                    <option value="Masculin">Masculin</option>
+                    <option value="Féminin">Féminin</option>
+                  </select>
+                </div>
+                {(filterPathologie || filterNiveau || filterAgeGroup || filterGender) && (
                   <button
-                    onClick={() => { setFilterPathologie(''); setFilterNiveau(''); }}
+                    onClick={() => {
+                      setFilterPathologie('');
+                      setFilterNiveau('');
+                      setFilterAgeGroup('');
+                      setFilterGender('');
+                    }}
                     className="px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     Réinitialiser
