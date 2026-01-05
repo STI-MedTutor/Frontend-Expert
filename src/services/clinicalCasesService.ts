@@ -11,6 +11,20 @@ interface ApiResponse<T> {
 
 class ClinicalCasesService {
 
+    private mapBackendCase(c: any): ClinicalCase {
+        const approval_status = c.validation?.status === 'validated' ? 'approved' :
+            c.validation?.status === 'rejected' ? 'rejected' :
+                (c.validation?.status === 'pending' || c.validation?.status === 'in_progress') ? 'pending' :
+                    undefined;
+
+        return {
+            ...c,
+            approval_status,
+            rejection_reason: c.validation?.rejection_reason,
+            rejected_elements: c.validation?.rejection_parts
+        };
+    }
+
     async getCases(pathologie?: string, niveau?: string): Promise<ClinicalCase[]> {
         try {
             const params = new URLSearchParams();
@@ -30,7 +44,7 @@ class ClinicalCasesService {
                 throw new Error(data.message || 'Erreur API inconnue');
             }
 
-            return data.cases || [];
+            return (data.cases || []).map(c => this.mapBackendCase(c));
         } catch (error) {
             console.error('[ClinicalCasesService] Erreur getCases:', error);
             throw error;
@@ -55,7 +69,7 @@ class ClinicalCasesService {
                 throw new Error(data.message || 'Erreur API inconnue');
             }
 
-            return data.case;
+            return data.case ? this.mapBackendCase(data.case) : undefined;
         } catch (error) {
             console.error(`[ClinicalCasesService] Erreur getCaseById(${id}):`, error);
             throw error;
@@ -86,7 +100,7 @@ class ClinicalCasesService {
                 throw new Error('Réponse API invalide: cas non retourné');
             }
 
-            return data.case;
+            return this.mapBackendCase(data.case);
         } catch (error) {
             console.error(`[ClinicalCasesService] Erreur updateCase(${id}):`, error);
             throw error;
@@ -117,7 +131,7 @@ class ClinicalCasesService {
                 throw new Error('Réponse API invalide: cas non retourné');
             }
 
-            return data.case;
+            return this.mapBackendCase(data.case);
         } catch (error) {
             console.error('[ClinicalCasesService] Erreur createCase:', error);
             throw error;

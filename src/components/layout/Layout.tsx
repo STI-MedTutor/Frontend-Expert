@@ -5,13 +5,20 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../stores/authStore";
 import doctorAvatar from "../../assets/doctor-avatar.png";
+import { useTranslation } from "react-i18next";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+    const { t, i18n } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
     const { isAuthenticated, user, userType, logout } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+
+    const toggleLanguage = () => {
+        const newLang = i18n.language === 'fr' ? 'en' : 'fr';
+        i18n.changeLanguage(newLang);
+    };
 
     const handleLogout = async () => {
         await logout();
@@ -43,22 +50,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     const navItems = [
         {
-            name: "Gestion Cas Cliniques",
+            name: t("nav.cases"),
             path: "/cases",
             icon: Activity,
         },
         ...(user?.is_teacher || user?.is_enseignant ? [{
-            name: "Cas clinique d'école",
+            name: t("nav.schoolCases"),
             path: "/cas-ecole",
             icon: GraduationCap,
         }] : []),
         ...(userType === 'gerant' ? [{
-            name: "Administration",
+            name: t("nav.admin"),
             path: "/admin",
             icon: Shield,
         }] : []),
         {
-            name: "Profil Expert",
+            name: t("nav.profile"),
             path: "/profile",
             icon: User,
         },
@@ -91,7 +98,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 )}
                             >
                                 <Activity className="h-4 w-4" />
-                                Gestion Cas Cliniques
+                                {t("nav.cases")}
                             </Link>
                         )}
                         {isAuthenticated && (!!user?.is_teacher || !!user?.is_enseignant) && (
@@ -105,7 +112,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 )}
                             >
                                 <GraduationCap className="h-4 w-4" />
-                                Cas clinique d'école
+                                {t("nav.schoolCases")}
                             </Link>
                         )}
                         {isAuthenticated && userType === 'gerant' && (
@@ -119,7 +126,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 )}
                             >
                                 <Shield className="h-4 w-4" />
-                                Administration
+                                {t("nav.admin")}
                             </Link>
                         )}
 
@@ -155,7 +162,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                                 className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors"
                                             >
                                                 <User className="h-4 w-4" />
-                                                Mon Profil
+                                                {t("nav.myProfile")}
                                             </Link>
                                             <div className="h-px bg-slate-200 my-1" />
                                             <button
@@ -163,7 +170,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                                 className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                                             >
                                                 <LogOut className="h-4 w-4" />
-                                                Déconnexion
+                                                {t("nav.logout")}
                                             </button>
                                         </motion.div>
                                     )}
@@ -173,16 +180,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <>
                                 <Link to="/login">
                                     <button className="text-sm font-medium text-slate-600 hover:text-primary transition-colors px-4 py-2">
-                                        Connexion
+                                        {t("nav.login")}
                                     </button>
                                 </Link>
                                 <Link to="/register">
                                     <button className="text-sm font-medium bg-primary text-white px-5 py-2.5 rounded-full hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5">
-                                        S'inscrire
+                                        {t("nav.register")}
                                     </button>
                                 </Link>
                             </>
                         )}
+
+                        <div className="h-6 w-px bg-slate-200 mx-2" />
+
+                        {/* Language Switcher */}
+                        <button
+                            onClick={toggleLanguage}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-primary hover:text-white transition-all border border-slate-200 uppercase"
+                        >
+                            {i18n.language === 'fr' ? 'EN' : 'FR'}
+                        </button>
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -225,6 +242,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                         <div className="h-px bg-slate-200 my-1" />
                                     </>
                                 )}
+
+                                {/* Mobile Language Switcher */}
+                                <div className="px-4 py-2">
+                                    <button
+                                        onClick={toggleLanguage}
+                                        className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-primary hover:text-white transition-all border border-slate-200 uppercase"
+                                    >
+                                        <span>Langue / Language</span>
+                                        <span className="bg-white/20 px-2 py-0.5 rounded-lg">
+                                            {i18n.language === 'fr' ? 'EN' : 'FR'}
+                                        </span>
+                                    </button>
+                                </div>
 
                                 {isAuthenticated && navItems.map((item) => (
                                     <Link

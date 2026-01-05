@@ -4,10 +4,12 @@ import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Stethoscope, Mail, Lock, User, ArrowRight, Github, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import authBg from "../assets/auth-bg.png";
 import { useAuth } from "../stores/authStore";
 
 export default function Register() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { register } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +35,7 @@ export default function Register() {
             });
             navigate('/');
         } catch (err: any) {
-            setError(err.message || "Erreur lors de l'inscription");
+            setError(err.message || t("auth.register.error"));
         } finally {
             setIsLoading(false);
         }
@@ -55,10 +57,10 @@ export default function Register() {
                             <span>MedExpert</span>
                         </Link>
                         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-                            Créer un compte
+                            {t("auth.register.title")}
                         </h1>
                         <p className="text-slate-500">
-                            Rejoignez la communauté des experts médicaux.
+                            {t("auth.register.subtitle")}
                         </p>
                     </div>
 
@@ -67,7 +69,7 @@ export default function Register() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-700" htmlFor="firstName">
-                                        Prénom
+                                        {t("auth.register.firstName")}
                                     </label>
                                     <div className="relative">
                                         <User className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
@@ -82,7 +84,7 @@ export default function Register() {
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-700" htmlFor="lastName">
-                                        Nom
+                                        {t("auth.register.lastName")}
                                     </label>
                                     <Input
                                         id="lastName"
@@ -96,7 +98,7 @@ export default function Register() {
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700" htmlFor="email">
-                                    Email
+                                    {t("auth.register.email")}
                                 </label>
                                 {error && (
                                     <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-lg">
@@ -119,7 +121,7 @@ export default function Register() {
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700" htmlFor="password">
-                                    Mot de passe
+                                    {t("auth.register.password")}
                                 </label>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
@@ -137,7 +139,7 @@ export default function Register() {
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700" htmlFor="expertise">
-                                    Domaine d'Expertise
+                                    {t("auth.register.expertise")}
                                 </label>
                                 <select
                                     id="expertise"
@@ -159,7 +161,7 @@ export default function Register() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-700" htmlFor="etablissement">
-                                        Établissement
+                                        {t("auth.register.institution")}
                                     </label>
                                     <Input
                                         id="etablissement"
@@ -170,7 +172,7 @@ export default function Register() {
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-700" htmlFor="experience">
-                                        Expérience (ans)
+                                        {t("auth.register.experience")}
                                     </label>
                                     <Input
                                         id="experience"
@@ -195,7 +197,7 @@ export default function Register() {
                                 htmlFor="is_teacher"
                                 className="text-sm font-medium leading-none text-slate-700 cursor-pointer select-none"
                             >
-                                Je suis enseignant
+                                {t("auth.register.teacher")}
                             </label>
                         </div>
 
@@ -207,7 +209,7 @@ export default function Register() {
                             {isLoading ? (
                                 <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                             ) : (
-                                <>S'inscrire <ArrowRight className="ml-2 h-4 w-4" /></>
+                                <>{t("auth.register.registerButton")} <ArrowRight className="ml-2 h-4 w-4" /></>
                             )}
                         </Button>
 
@@ -216,7 +218,7 @@ export default function Register() {
                                 <span className="w-full border-t border-slate-200" />
                             </div>
                             <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-white px-2 text-slate-500">Ou continuer avec</span>
+                                <span className="bg-white px-2 text-slate-500">{t("auth.login.orContinueWith")}</span>
                             </div>
                         </div>
 
@@ -226,9 +228,9 @@ export default function Register() {
                     </form>
 
                     <p className="text-center text-sm text-slate-600">
-                        Déjà un compte ?{" "}
+                        {t("auth.register.alreadyHaveAccount")}{" "}
                         <Link to="/login" className="font-semibold text-primary hover:underline">
-                            Se connecter
+                            {t("auth.register.login")}
                         </Link>
                     </p>
                 </motion.div>
@@ -243,9 +245,9 @@ export default function Register() {
                     className="absolute inset-0 w-full h-full object-cover opacity-80"
                 />
                 <div className="absolute bottom-0 left-0 right-0 p-12 z-20 bg-gradient-to-t from-slate-900/90 to-transparent text-white space-y-4">
-                    <h2 className="text-3xl font-bold">Rejoignez l'excellence</h2>
+                    <h2 className="text-3xl font-bold">{t("auth.register.joinExcellence")}</h2>
                     <p className="text-slate-300 max-w-md">
-                        Participez à la formation de la prochaine génération de médecins grâce à nos outils de simulation avancés.
+                        {t("auth.register.joinExcellenceDesc")}
                     </p>
                 </div>
             </div>

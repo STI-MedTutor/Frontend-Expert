@@ -8,8 +8,10 @@ import { userService } from "../services/userService";
 import { useAuth } from "../stores/authStore";
 import { expertService } from "../services/expertService";
 import { clinicalCasesService } from "../services/clinicalCasesService";
+import { useTranslation } from "react-i18next";
 
 export default function ExpertProfile() {
+    const { t } = useTranslation();
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState<"profile" | "activity">("profile");
     const [profile, setProfile] = useState<any>(null);
@@ -59,8 +61,7 @@ export default function ExpertProfile() {
                     }
                 }
 
-                console.log("Expert Profile Data:", profileData);
-                console.log("Expert Stats Data:", schoolStats);
+
 
                 setStats({
                     totalCases: total,
@@ -101,10 +102,10 @@ export default function ExpertProfile() {
                 is_enseignant: profile.is_enseignant,
             });
             setProfile({ ...updated, avatar: doctorAvatar });
-            setSuccessMessage("Profil mis à jour avec succès!");
+            setSuccessMessage(t("profile.updateSuccess"));
             setTimeout(() => setSuccessMessage(""), 3000);
         } catch (err: any) {
-            setError(err.message || "Erreur lors de la sauvegarde");
+            setError(err.message || t("profile.updateError"));
         } finally {
             setIsSaving(false);
         }
@@ -123,7 +124,7 @@ export default function ExpertProfile() {
             <div className="flex items-center justify-center h-64">
                 <div className="text-center space-y-2">
                     <AlertCircle className="h-12 w-12 text-red-500 mx-auto" />
-                    <p className="text-slate-600">Impossible de charger le profil</p>
+                    <p className="text-slate-600">{t("profile.loadError")}</p>
                     {error && <p className="text-sm text-red-600">{error}</p>}
                 </div>
             </div>
@@ -136,12 +137,12 @@ export default function ExpertProfile() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="space-y-1">
                     <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-                        {activeTab === "profile" ? "Gestion du Profil" : "Tableau de Bord Expert"}
+                        {activeTab === "profile" ? t("profile.title") : t("profile.dashboard")}
                     </h1>
                     <p className="text-slate-500">
                         {activeTab === "profile"
-                            ? "Gérez vos informations personnelles et vos préférences."
-                            : "Aperçu de l'activité de la plateforme et des performances."}
+                            ? t("profile.subtitle_profile")
+                            : t("profile.subtitle_activity")}
                     </p>
                 </div>
                 {error && (
@@ -163,7 +164,7 @@ export default function ExpertProfile() {
                             : "bg-white text-slate-600 hover:bg-slate-50"
                             }`}
                     >
-                        <User className="w-4 h-4" /> Mon Profil
+                        <User className="w-4 h-4" /> {t("profile.profileTab")}
                     </button>
                     {(profile?.is_enseignant || profile?.is_teacher) && (
                         <button
@@ -173,7 +174,7 @@ export default function ExpertProfile() {
                                 : "bg-white text-slate-600 hover:bg-slate-50"
                                 }`}
                         >
-                            <LayoutDashboard className="w-4 h-4" /> Activité
+                            <LayoutDashboard className="w-4 h-4" /> {t("profile.activityTab")}
                         </button>
                     )}
                 </div>
@@ -206,12 +207,12 @@ export default function ExpertProfile() {
                                 <div className="flex flex-col items-center gap-1 mb-6">
                                     <p className="text-slate-600 font-medium">{profile.etablissement}</p>
                                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
-                                        {profile.annees_experience} ans d'expérience
+                                        {profile.annees_experience} {t("profile.years")}
                                     </span>
                                 </div>
                                 <div className="flex gap-4 w-full max-w-xs justify-center">
                                     <div className="flex-1 bg-white/40 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/50 shadow-sm max-w-[150px]">
-                                        <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Cas</p>
+                                        <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">{t("profile.stats.totalCases")}</p>
                                         <p className="text-2xl font-bold text-slate-800">{stats.totalCases}</p>
                                     </div>
                                 </div>
@@ -224,16 +225,16 @@ export default function ExpertProfile() {
                                 <div className="flex items-center justify-between mb-8">
                                     <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                                         <User className="h-5 w-5 text-primary" />
-                                        Informations Personnelles
+                                        {t("profile.personalInfo")}
                                     </h2>
                                     <span className="text-xs font-medium px-3 py-1 rounded-full bg-purple-50 text-primary border border-purple-100">
-                                        Mode Édition
+                                        {t("profile.editMode")}
                                     </span>
                                 </div>
 
                                 <div className="grid gap-6 md:grid-cols-2">
                                     <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Nom</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">{t("profile.lastName")}</label>
                                         <Input
                                             value={profile.nom}
                                             onChange={(e) => setProfile({ ...profile, nom: e.target.value })}
@@ -241,7 +242,7 @@ export default function ExpertProfile() {
                                         />
                                     </div>
                                     <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Prénom</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">{t("profile.firstName")}</label>
                                         <Input
                                             value={profile.prenom}
                                             onChange={(e) => setProfile({ ...profile, prenom: e.target.value })}
@@ -249,7 +250,7 @@ export default function ExpertProfile() {
                                         />
                                     </div>
                                     <div className="space-y-2 group md:col-span-2">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Domaine d'Expertise</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">{t("profile.expertise")}</label>
                                         <select
                                             value={profile.domaine_expertise}
                                             onChange={(e) => setProfile({ ...profile, domaine_expertise: e.target.value })}
@@ -261,7 +262,7 @@ export default function ExpertProfile() {
                                         </select>
                                     </div>
                                     <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Établissement</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">{t("profile.institution")}</label>
                                         <Input
                                             value={profile.etablissement}
                                             onChange={(e) => setProfile({ ...profile, etablissement: e.target.value })}
@@ -269,7 +270,7 @@ export default function ExpertProfile() {
                                         />
                                     </div>
                                     <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Années d'Expérience</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">{t("profile.experience")}</label>
                                         <Input
                                             type="number"
                                             value={profile.annees_experience}
@@ -278,7 +279,7 @@ export default function ExpertProfile() {
                                         />
                                     </div>
                                     <div className="space-y-2 group">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Statut</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">{t("profile.status")}</label>
                                         <div className="flex items-center gap-2 h-11 px-3 bg-white/60 border border-slate-200 rounded-md">
                                             <input
                                                 type="checkbox"
@@ -286,11 +287,11 @@ export default function ExpertProfile() {
                                                 onChange={(e) => setProfile({ ...profile, is_enseignant: e.target.checked })}
                                                 className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
                                             />
-                                            <span className="text-sm text-slate-700">Enseignant</span>
+                                            <span className="text-sm text-slate-700">{t("profile.teacher")}</span>
                                         </div>
                                     </div>
                                     <div className="space-y-2 group md:col-span-2">
-                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">Email</label>
+                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1 group-focus-within:text-primary transition-colors">{t("profile.email")}</label>
                                         <Input
                                             value={profile.email}
                                             onChange={(e) => setProfile({ ...profile, email: e.target.value })}
@@ -308,7 +309,7 @@ export default function ExpertProfile() {
                                     className="hover:bg-slate-100 text-slate-600"
                                     onClick={() => window.location.reload()}
                                 >
-                                    Annuler
+                                    {t("common.cancel")}
                                 </Button>
                                 <Button
                                     className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg shadow-primary/20 border-0"
@@ -318,10 +319,10 @@ export default function ExpertProfile() {
                                     {isSaving ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Enregistrement...
+                                            {t("profile.saving")}
                                         </>
                                     ) : (
-                                        "Enregistrer les modifications"
+                                        t("profile.saveChanges")
                                     )}
                                 </Button>
                             </div>
@@ -338,7 +339,7 @@ export default function ExpertProfile() {
                         {/* Stats Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             {[
-                                { label: "Cas Publiés", value: stats.publishedCases.toString(), trend: "", color: "text-green-600", icon: FileText },
+                                { label: t("profile.stats.publishedCases"), value: stats.publishedCases.toString(), trend: "", color: "text-green-600", icon: FileText },
                             ].map((stat, i) => (
                                 <div key={i} className="rounded-2xl border border-white/60 bg-white/60 backdrop-blur-md p-6 shadow-sm hover:shadow-md transition-shadow">
                                     <div className="flex justify-between items-start mb-2">
@@ -359,41 +360,54 @@ export default function ExpertProfile() {
                             {(profile?.is_enseignant || profile?.is_teacher) && (
                                 <div className="rounded-3xl border border-white/60 bg-white/60 backdrop-blur-md p-6 shadow-sm">
                                     <div className="flex justify-between items-center mb-6">
-                                        <h3 className="font-bold text-slate-800">Activités des Cas Cliniques d'École</h3>
-                                        <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">4 dernières semaines</span>
+                                        <h3 className="font-bold text-slate-800">{t("profile.stats.schoolActivity")}</h3>
+                                        <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">{t("profile.stats.lastWeeks")}</span>
                                     </div>
-                                    <div className="h-48 flex items-end relative gap-2">
-                                        {/* Bar Chart Implementation */}
-                                        {stats.schoolActivity.length > 0 ? (
-                                            stats.schoolActivity.map((count, index) => {
-                                                const max = Math.max(...stats.schoolActivity, 1);
+                                    <div className="h-64 flex flex-col justify-between relative pt-4">
+                                        {/* Y-Axis Labels & Grid Lines */}
+                                        <div className="absolute inset-0 flex flex-col justify-between text-[10px] text-slate-400 pointer-events-none pb-8">
+                                            <div className="border-b border-slate-100 w-full flex justify-between"><span>{Math.max(...stats.schoolActivity, 5)}</span></div>
+                                            <div className="border-b border-slate-100 w-full flex justify-between"><span>{Math.floor(Math.max(...stats.schoolActivity, 5) / 2)}</span></div>
+                                            <div className="border-b border-slate-200 w-full flex justify-between font-bold"><span>0</span></div>
+                                        </div>
+
+                                        <div className="flex-1 flex items-end gap-4 relative z-10 px-2">
+                                            {/* Bar Chart Implementation */}
+                                            {(stats.schoolActivity.length > 0 ? stats.schoolActivity : [0, 0, 0, 0]).map((count, index) => {
+                                                const max = Math.max(...stats.schoolActivity, 5);
                                                 const height = (count / max) * 100;
+                                                const label = stats.schoolLabels[index] || `W${index + 1}`;
+
                                                 return (
-                                                    <div key={index} className="flex-1 flex flex-col justify-end items-center group">
+                                                    <div key={index} className="flex-1 flex flex-col justify-end items-center group h-full">
                                                         <div
-                                                            className="w-full bg-primary/40 rounded-t-md relative group-hover:bg-primary/60 transition-colors shadow-sm"
-                                                            style={{ height: `${height}%`, minHeight: count > 0 ? '4px' : '0' }}
+                                                            className="w-full bg-slate-50 rounded-t-lg relative group-hover:bg-slate-100 transition-all duration-300 shadow-inner overflow-hidden border border-slate-100/50"
+                                                            style={{ height: '100%' }}
                                                         >
-                                                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                {count}
+                                                            <motion.div
+                                                                initial={{ height: 0 }}
+                                                                animate={{ height: `${height}%` }}
+                                                                transition={{ duration: 1, ease: "easeOut" }}
+                                                                className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary to-accent group-hover:from-primary/80 group-hover:to-accent/80 transition-all shadow-[0_-4px_12px_rgba(var(--primary-rgb),0.2)]"
+                                                            />
+
+                                                            {/* Tooltip */}
+                                                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 z-20 whitespace-nowrap">
+                                                                {count} {t("profile.stats.totalCases")}
                                                             </div>
                                                         </div>
-                                                        <span className="text-xs text-slate-500 mt-2">{stats.schoolLabels[index]}</span>
+                                                        <span className="text-[10px] font-bold text-slate-400 mt-3 uppercase tracking-tighter">{label}</span>
                                                     </div>
                                                 );
-                                            })
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-slate-400">
-                                                Aucune activité récente
-                                            </div>
-                                        )}
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
                             )}
 
                             {/* Activity Feed */}
                             <div className="rounded-3xl border border-white/60 bg-white/60 backdrop-blur-md p-6 shadow-sm">
-                                <h3 className="font-bold text-slate-800 mb-6">Flux d'Activité et Notifications</h3>
+                                <h3 className="font-bold text-slate-800 mb-6">{t("profile.stats.recentActivity")}</h3>
                                 <div className="space-y-4">
                                     {stats.recentActivities.length > 0 ? (
                                         stats.recentActivities.map((item, i) => (
@@ -409,7 +423,7 @@ export default function ExpertProfile() {
                                         ))
                                     ) : (
                                         <div className="text-center text-slate-500 py-4">
-                                            Aucune activité récente
+                                            {t("profile.stats.noActivity")}
                                         </div>
                                     )}
                                 </div>
@@ -418,6 +432,6 @@ export default function ExpertProfile() {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 }

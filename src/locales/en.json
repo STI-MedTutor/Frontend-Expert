@@ -1,0 +1,314 @@
+{
+    "nav": {
+        "cases": "Clinical Cases Management",
+        "schoolCases": "School Clinical Cases",
+        "admin": "Administration",
+        "profile": "Expert Profile",
+        "myProfile": "My Profile",
+        "logout": "Logout",
+        "login": "Login",
+        "register": "Register"
+    },
+    "common": {
+        "refresh": "Refresh",
+        "newCase": "New Case",
+        "loading": "Loading...",
+        "error": "Error",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "details": "Details",
+        "actions": "Actions",
+        "status": "Status",
+        "date": "Date",
+        "search": "Search...",
+        "all": "All",
+        "none": "None",
+        "success": "Success",
+        "warning": "Warning",
+        "info": "Information",
+        "confirm": "Confirm",
+        "previous": "Previous",
+        "next": "Next",
+        "showing": "Showing {{count}} cases"
+    },
+    "cases": {
+        "title": "Clinical Cases Management",
+        "subtitle": "Validate, reject, or edit clinical cases submitted by students.",
+        "filters": "Filters",
+        "pathology": "Pathology",
+        "level": "Level",
+        "age": "Age",
+        "gender": "Gender",
+        "patient": "Patient",
+        "reason": "Reason",
+        "diagnostic": "Diagnosis",
+        "domain": "Domain",
+        "type": "Type",
+        "status_pending": "In Progress",
+        "status_approved": "Approved",
+        "status_rejected": "Rejected",
+        "status_all": "All",
+        "approve": "Approve",
+        "reject": "Reject",
+        "setInProgress": "Set In Progress",
+        "quickEdit": "Quick Edit",
+        "exportJson": "Export JSON",
+        "exportCsv": "Export CSV",
+        "noCases": "No cases found",
+        "loadError": "Error loading cases",
+        "saveSuccess": "Changes saved",
+        "saveError": "Error saving changes",
+        "approveSuccess": "Case approved successfully",
+        "approveError": "Error approving case",
+        "rejectSuccess": "Case rejected successfully",
+        "rejectError": "Error rejecting case",
+        "inProgressSuccess": "Case set in progress",
+        "inProgressError": "Error setting case in progress",
+        "updateSuccess": "Complete file updated",
+        "createSuccess": "New case created successfully"
+    },
+    "profile": {
+        "title": "Profile Management",
+        "dashboard": "Expert Dashboard",
+        "subtitle_profile": "Manage your personal information and preferences.",
+        "subtitle_activity": "Platform activity overview and performance.",
+        "profileTab": "My Profile",
+        "activityTab": "Activity",
+        "personalInfo": "Personal Information",
+        "editMode": "Edit Mode",
+        "lastName": "Last Name",
+        "firstName": "First Name",
+        "expertise": "Field of Expertise",
+        "institution": "Institution",
+        "experience": "Years of Experience",
+        "years": "years",
+        "status": "Status",
+        "teacher": "Teacher",
+        "email": "Email",
+        "saveChanges": "Save Changes",
+        "saving": "Saving...",
+        "updateSuccess": "Profile updated successfully!",
+        "updateError": "Error updating profile",
+        "loadError": "Unable to load profile",
+        "stats": {
+            "totalCases": "Cases",
+            "publishedCases": "Published Cases",
+            "schoolActivity": "School Clinical Case Activities",
+            "recentActivity": "Activity Feed and Notifications",
+            "noActivity": "No recent activity",
+            "lastWeeks": "Last 4 weeks"
+        }
+    },
+    "home": {
+        "hero": {
+            "title": "Clinical case expertise",
+            "titleAccent": "at your fingertips",
+            "subtitle": "The platform derived from MedTutor for clinical case management. A modern, intuitive and secure interface for healthcare professionals.",
+            "manageCases": "Manage Clinical Cases",
+            "myProfile": "My Profile"
+        },
+        "features": {
+            "intuitive": {
+                "title": "Intuitive Management",
+                "description": "Create, edit and track your clinical cases with ease thanks to our intelligent tools."
+            },
+            "security": {
+                "title": "Maximum Security",
+                "description": "Your data and your patients' data are protected by the best encryption standards."
+            },
+            "community": {
+                "title": "Expert Community",
+                "description": "Join a community of experts, share your knowledge and collaborate on complex cases."
+            }
+        }
+    },
+    "auth": {
+        "login": {
+            "title": "Welcome back",
+            "subtitle": "Enter your credentials to access your space.",
+            "email": "Email",
+            "password": "Password",
+            "forgotPassword": "Forgot password?",
+            "loginButton": "Login",
+            "orContinueWith": "Or continue with",
+            "noAccount": "Don't have an account yet?",
+            "register": "Register",
+            "error": "Login error",
+            "quote": "Medicine is a science of uncertainty and an art of probability.",
+            "quoteAuthor": "William Osler"
+        },
+        "register": {
+            "title": "Create an account",
+            "subtitle": "Join our community of medical experts.",
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "email": "Email",
+            "password": "Password",
+            "confirmPassword": "Confirm Password",
+            "expertise": "Expertise Domain",
+            "institution": "Institution",
+            "experience": "Experience (years)",
+            "teacher": "I am a teacher",
+            "registerButton": "Register",
+            "alreadyHaveAccount": "Already have an account?",
+            "login": "Login",
+            "error": "Registration error",
+            "joinExcellence": "Join Excellence",
+            "joinExcellenceDesc": "Participate in training the next generation of doctors with our advanced simulation tools."
+        }
+    },
+    "schoolCases": {
+        "title": "School Clinical Cases",
+        "subtitle": "Manage your evaluations and pedagogical exercises",
+        "newCase": "New School Case",
+        "status": {
+            "active": "Active",
+            "draft": "Draft"
+        },
+        "actions": {
+            "activate": "Activate",
+            "deactivate": "Deactivate",
+            "delete": "Delete",
+            "details": "Details"
+        },
+        "labels": {
+            "institutionClass": "Institution & Class",
+            "unknownPathology": "Unknown pathology",
+            "minutes": "min"
+        },
+        "messages": {
+            "activated": "Case activated",
+            "deactivated": "Case deactivated",
+            "deleted": "School case deleted",
+            "deleteConfirm": "Are you sure you want to delete this school case?",
+            "errorToggle": "Error while changing state",
+            "errorDelete": "Error while deleting",
+            "noCases": "No school cases",
+            "noCasesDesc": "Start by creating your first pedagogical case.",
+            "createNow": "Create a case now"
+        }
+    },
+    "casesPage": {
+        "title": "Clinical Case Management",
+        "subtitle": "Explore and manage patient records in a complete and detailed manner."
+    },
+    "caseModal": {
+        "tabs": {
+            "identity": "Identity",
+            "clinical": "Clinical",
+            "medical": "Folder",
+            "history": "History",
+            "exams": "Exams",
+            "prescriptions": "Prescriptions",
+            "hospitalisations": "Hospitalization",
+            "metadata": "Metadata"
+        },
+        "patientInfo": {
+            "title": "Patient Information",
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "birthDate": "Birth Date",
+            "gender": "Gender",
+            "select": "Select",
+            "male": "Male",
+            "female": "Female",
+            "unknown": "Unknown",
+            "ageUnknown": "Age unknown",
+            "years": "years"
+        },
+        "consultation": {
+            "title": "Consultation Reason",
+            "reason": "Main Reason",
+            "notes": "Preliminary Notes"
+        },
+        "vitalSigns": {
+            "title": "Vital Signs",
+            "temperature": "Temperature (°C)",
+            "bloodPressure": "Blood Pressure (mmHg)",
+            "heartRate": "Heart Rate (bpm)",
+            "weight": "Weight (kg)",
+            "nurseNote": "Nurse Note"
+        },
+        "medicalFolder": {
+            "diagnostic": "Suspected Diagnosis",
+            "doctorNote": "Doctor's Note",
+            "placeholder": "Detailed clinical observations..."
+        },
+        "history": {
+            "chronicDiseases": "Chronic Diseases",
+            "allergies": "Allergies",
+            "currentMedication": "Current Medication",
+            "familyHistory": "Family History"
+        },
+        "exams": {
+            "title": "Requested Exams",
+            "noExams": "No exams requested",
+            "results": "Results",
+            "viewFile": "View file"
+        },
+        "prescriptions": {
+            "title": "Prescriptions",
+            "prescribedOn": "Prescribed on",
+            "noPrescriptions": "No prescriptions",
+            "quantity": "Qty"
+        },
+        "hospitalisations": {
+            "title": "Hospitalizations",
+            "active": "In progress",
+            "finished": "Finished",
+            "entry": "Entry",
+            "exit": "Planned Exit",
+            "noHospitalisations": "No hospitalizations",
+            "room": "Room",
+            "bed": "Bed",
+            "day": "day"
+        },
+        "appointments": {
+            "title": "Appointments"
+        },
+        "metadata": {
+            "title": "STI Metadata",
+            "pathology": "Pathology",
+            "complexity": "Complexity Level",
+            "consultationInfo": "Consultation Information",
+            "date": "Date",
+            "price": "Price",
+            "state": "State",
+            "payment": "Payment",
+            "integrityHash": "Integrity Hash"
+        }
+    },
+    "casesCards": {
+        "searchPlaceholder": "Search for a patient, pathology...",
+        "filters": "Filters",
+        "refresh": "Refresh",
+        "reset": "Reset",
+        "noCases": "No cases found",
+        "jsonDownloaded": "JSON file downloaded",
+        "loadError": "Error loading cases",
+        "updateSuccess": "Folder updated",
+        "age": "years",
+        "female": "Female",
+        "male": "Male",
+        "modify": "Modify"
+    },
+    "rejectionModal": {
+        "title": "Reject clinical case",
+        "reasonLabel": "Rejection reason",
+        "reasonPlaceholder": "Explain why this case is rejected...",
+        "elementsLabel": "Rejected elements",
+        "confirm": "Confirm rejection",
+        "errorReason": "Please enter a reason for rejection.",
+        "errorElements": "Please check at least one rejected element.",
+        "elements": {
+            "patient": "Patient Information",
+            "diagnostic": "Diagnosis",
+            "exams": "Exams",
+            "prescriptions": "Prescriptions",
+            "consultationReason": "Consultation Reason",
+            "medicalFolder": "Medical Folder"
+        }
+    }
+}

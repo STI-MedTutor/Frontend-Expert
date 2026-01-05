@@ -4,10 +4,12 @@ import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Stethoscope, Mail, Lock, ArrowRight, Github, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import authBg from "../assets/auth-bg.png";
 import { useAuth } from "../stores/authStore";
 
 export default function Login() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { login } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +28,7 @@ export default function Login() {
             );
             navigate("/ClinicalCases");
         } catch (err: any) {
-            setError(err.message || "Erreur de connexion");
+            setError(err.message || t("auth.login.error"));
         } finally {
             setIsLoading(false);
         }
@@ -48,10 +50,10 @@ export default function Login() {
                             <span>MedExpert</span>
                         </Link>
                         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-                            Bon retour
+                            {t("auth.login.title")}
                         </h1>
                         <p className="text-slate-500">
-                            Entrez vos identifiants pour accéder à votre espace.
+                            {t("auth.login.subtitle")}
                         </p>
                     </div>
 
@@ -59,7 +61,7 @@ export default function Login() {
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700" htmlFor="email">
-                                    Email
+                                    {t("auth.login.email")}
                                 </label>
                                 {error && (
                                     <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-lg">
@@ -82,10 +84,10 @@ export default function Login() {
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
                                     <label className="text-sm font-medium text-slate-700" htmlFor="password">
-                                        Mot de passe
+                                        {t("auth.login.password")}
                                     </label>
                                     <Link to="#" className="text-sm font-medium text-primary hover:underline">
-                                        Mot de passe oublié ?
+                                        {t("auth.login.forgotPassword")}
                                     </Link>
                                 </div>
                                 <div className="relative">
@@ -110,7 +112,7 @@ export default function Login() {
                             {isLoading ? (
                                 <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                             ) : (
-                                <>Se connecter <ArrowRight className="ml-2 h-4 w-4" /></>
+                                <>{t("auth.login.loginButton")} <ArrowRight className="ml-2 h-4 w-4" /></>
                             )}
                         </Button>
 
@@ -119,7 +121,7 @@ export default function Login() {
                                 <span className="w-full border-t border-slate-200" />
                             </div>
                             <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-white px-2 text-slate-500">Ou continuer avec</span>
+                                <span className="bg-white px-2 text-slate-500">{t("auth.login.orContinueWith")}</span>
                             </div>
                         </div>
 
@@ -129,9 +131,9 @@ export default function Login() {
                     </form>
 
                     <p className="text-center text-sm text-slate-600">
-                        Pas encore de compte ?{" "}
+                        {t("auth.login.noAccount")}{" "}
                         <Link to="/register" className="font-semibold text-primary hover:underline">
-                            S'inscrire
+                            {t("auth.login.register")}
                         </Link>
                     </p>
                 </motion.div>
@@ -147,9 +149,9 @@ export default function Login() {
                 />
                 <div className="absolute bottom-0 left-0 right-0 p-12 z-20 bg-gradient-to-t from-slate-900/90 to-transparent text-white space-y-4">
                     <blockquote className="text-lg font-medium italic opacity-90">
-                        "La médecine est une science d'incertitude et un art de probabilité."
+                        "{t("auth.login.quote")}"
                     </blockquote>
-                    <p className="text-sm font-semibold text-accent">— William Osler</p>
+                    <p className="text-sm font-semibold text-accent">— {t("auth.login.quoteAuthor")}</p>
                 </div>
             </div>
         </div>

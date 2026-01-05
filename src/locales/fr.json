@@ -1,0 +1,314 @@
+{
+    "nav": {
+        "cases": "Gestion Cas Cliniques",
+        "schoolCases": "Cas clinique d'école",
+        "admin": "Administration",
+        "profile": "Profil Expert",
+        "myProfile": "Mon Profil",
+        "logout": "Déconnexion",
+        "login": "Connexion",
+        "register": "S'inscrire"
+    },
+    "common": {
+        "refresh": "Rafraîchir",
+        "newCase": "Nouveau Cas",
+        "loading": "Chargement...",
+        "error": "Erreur",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "delete": "Supprimer",
+        "edit": "Modifier",
+        "details": "Détails",
+        "actions": "Actions",
+        "status": "Statut",
+        "date": "Date",
+        "search": "Rechercher...",
+        "all": "Tous",
+        "none": "Aucun",
+        "success": "Succès",
+        "warning": "Avertissement",
+        "info": "Information",
+        "confirm": "Confirmer",
+        "previous": "Précédent",
+        "next": "Suivant",
+        "showing": "Affichage de {{count}} cas"
+    },
+    "cases": {
+        "title": "Gestion des Cas Cliniques",
+        "subtitle": "Validez, rejetez ou modifiez les cas cliniques soumis par les étudiants.",
+        "filters": "Filtres",
+        "pathology": "Pathologie",
+        "level": "Niveau",
+        "age": "Age",
+        "gender": "Sexe",
+        "patient": "Patient",
+        "reason": "Motif",
+        "diagnostic": "Diagnostic",
+        "domain": "Domaine",
+        "type": "Type",
+        "status_pending": "En cours",
+        "status_approved": "Approuvé",
+        "status_rejected": "Rejeté",
+        "status_all": "Tous",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "setInProgress": "Mettre en cours",
+        "quickEdit": "Modification rapide",
+        "exportJson": "Exporter JSON",
+        "exportCsv": "Exporter CSV",
+        "noCases": "Aucun cas trouvé",
+        "loadError": "Erreur lors du chargement des cas",
+        "saveSuccess": "Modifications enregistrées",
+        "saveError": "Erreur lors de la sauvegarde",
+        "approveSuccess": "Cas approuvé avec succès",
+        "approveError": "Erreur lors de l'approbation",
+        "rejectSuccess": "Cas rejeté avec succès",
+        "rejectError": "Erreur lors du rejet",
+        "inProgressSuccess": "Cas mis en cours",
+        "inProgressError": "Erreur lors de la mise en cours",
+        "updateSuccess": "Dossier complet mis à jour",
+        "createSuccess": "Nouveau cas créé avec succès"
+    },
+    "profile": {
+        "title": "Gestion du Profil",
+        "dashboard": "Tableau de Bord Expert",
+        "subtitle_profile": "Gérez vos informations personnelles et vos préférences.",
+        "subtitle_activity": "Aperçu de l'activité de la plateforme et des performances.",
+        "profileTab": "Mon Profil",
+        "activityTab": "Activité",
+        "personalInfo": "Informations Personnelles",
+        "editMode": "Mode Édition",
+        "lastName": "Nom",
+        "firstName": "Prénom",
+        "expertise": "Domaine d'Expertise",
+        "institution": "Établissement",
+        "experience": "Années d'Expérience",
+        "years": "ans",
+        "status": "Statut",
+        "teacher": "Enseignant",
+        "email": "Email",
+        "saveChanges": "Enregistrer les modifications",
+        "saving": "Enregistrement...",
+        "updateSuccess": "Profil mis à jour avec succès!",
+        "updateError": "Erreur lors de la mise à jour",
+        "loadError": "Impossible de charger le profil",
+        "stats": {
+            "totalCases": "Cas",
+            "publishedCases": "Cas Publiés",
+            "schoolActivity": "Activités des Cas Cliniques d'École",
+            "recentActivity": "Flux d'Activité et Notifications",
+            "noActivity": "Aucune activité récente",
+            "lastWeeks": "4 dernières semaines"
+        }
+    },
+    "home": {
+        "hero": {
+            "title": "L’expertise des cas cliniques",
+            "titleAccent": "à portée de main",
+            "subtitle": "La plateforme dérivée de MedTutor pour la gestion des cas cliniques. Une interface moderne, intuitive et sécurisée pour les professionnels de santé.",
+            "manageCases": "Gérer les Cas Cliniques",
+            "myProfile": "Mon Profil"
+        },
+        "features": {
+            "intuitive": {
+                "title": "Gestion Intuitive",
+                "description": "Créez, modifiez et suivez vos cas cliniques avec une facilité déconcertante grâce à nos outils intelligents."
+            },
+            "security": {
+                "title": "Sécurité Maximale",
+                "description": "Vos données et celles de vos patients sont protégées par les meilleurs standards de chiffrement."
+            },
+            "community": {
+                "title": "Communauté Expert",
+                "description": "Rejoignez une communauté d'experts, partagez vos connaissances et collaborez sur des cas complexes."
+            }
+        }
+    },
+    "auth": {
+        "login": {
+            "title": "Bon retour",
+            "subtitle": "Entrez vos identifiants pour accéder à votre espace.",
+            "email": "Email",
+            "password": "Mot de passe",
+            "forgotPassword": "Mot de passe oublié ?",
+            "loginButton": "Se connecter",
+            "orContinueWith": "Ou continuer avec",
+            "noAccount": "Pas encore de compte ?",
+            "register": "S'inscrire",
+            "error": "Erreur de connexion",
+            "quote": "La médecine est une science d'incertitude et un art de probabilité.",
+            "quoteAuthor": "William Osler"
+        },
+        "register": {
+            "title": "Créer un compte",
+            "subtitle": "Rejoignez notre communauté d'experts médicaux.",
+            "firstName": "Prénom",
+            "lastName": "Nom",
+            "email": "Email",
+            "password": "Mot de passe",
+            "confirmPassword": "Confirmer le mot de passe",
+            "expertise": "Domaine d'Expertise",
+            "institution": "Établissement",
+            "experience": "Expérience (ans)",
+            "teacher": "Je suis enseignant",
+            "registerButton": "S'inscrire",
+            "alreadyHaveAccount": "Déjà un compte ?",
+            "login": "Se connecter",
+            "error": "Erreur lors de l'inscription",
+            "joinExcellence": "Rejoignez l'excellence",
+            "joinExcellenceDesc": "Participez à la formation de la prochaine génération de médecins grâce à nos outils de simulation avancés."
+        }
+    },
+    "schoolCases": {
+        "title": "Cas Cliniques d'École",
+        "subtitle": "Gérez vos évaluations et exercices pédagogiques",
+        "newCase": "Nouveau Cas d'École",
+        "status": {
+            "active": "Actif",
+            "draft": "Brouillon"
+        },
+        "actions": {
+            "activate": "Activer",
+            "deactivate": "Désactiver",
+            "delete": "Supprimer",
+            "details": "Détails"
+        },
+        "labels": {
+            "institutionClass": "Établissement & Classe",
+            "unknownPathology": "Pathologie inconnue",
+            "minutes": "min"
+        },
+        "messages": {
+            "activated": "Cas activé",
+            "deactivated": "Cas désactivé",
+            "deleted": "Cas d'école supprimé",
+            "deleteConfirm": "Voulez-vous vraiment supprimer ce cas d'école ?",
+            "errorToggle": "Erreur lors du changement d'état",
+            "errorDelete": "Erreur lors de la suppression",
+            "noCases": "Aucun cas d'école",
+            "noCasesDesc": "Commencez par créer votre premier cas pédagogique.",
+            "createNow": "Créer un cas maintenant"
+        }
+    },
+    "casesPage": {
+        "title": "Gestion des Cas Cliniques",
+        "subtitle": "Explorez et gérez les dossiers patients de manière complète et détaillée."
+    },
+    "caseModal": {
+        "tabs": {
+            "identity": "Identité",
+            "clinical": "Clinique",
+            "medical": "Dossier",
+            "history": "Antécédents",
+            "exams": "Examens",
+            "prescriptions": "Ordonnances",
+            "hospitalisations": "Hospitalisation",
+            "metadata": "Métadonnées"
+        },
+        "patientInfo": {
+            "title": "Informations Patient",
+            "firstName": "Prénom",
+            "lastName": "Nom",
+            "birthDate": "Date de Naissance",
+            "gender": "Sexe",
+            "select": "Sélectionner",
+            "male": "Masculin",
+            "female": "Féminin",
+            "unknown": "Inconnu",
+            "ageUnknown": "Âge inconnu",
+            "years": "ans"
+        },
+        "consultation": {
+            "title": "Motif de Consultation",
+            "reason": "Motif Principal",
+            "notes": "Notes Préliminaires"
+        },
+        "vitalSigns": {
+            "title": "Constantes Vitales",
+            "temperature": "Température (°C)",
+            "bloodPressure": "Tension (mmHg)",
+            "heartRate": "Fréquence Card. (bpm)",
+            "weight": "Poids (kg)",
+            "nurseNote": "Note Infirmière"
+        },
+        "medicalFolder": {
+            "diagnostic": "Diagnostic Suspecté",
+            "doctorNote": "Note du Médecin",
+            "placeholder": "Observations cliniques détaillées..."
+        },
+        "history": {
+            "chronicDiseases": "Maladies Chroniques",
+            "allergies": "Allergies",
+            "currentMedication": "Médication Actuelle",
+            "familyHistory": "Antécédents Familiaux"
+        },
+        "exams": {
+            "title": "Examens Demandés",
+            "noExams": "Aucun examen demandé",
+            "results": "Résultats",
+            "viewFile": "Voir le fichier"
+        },
+        "prescriptions": {
+            "title": "Ordonnances",
+            "prescribedOn": "Prescrit le",
+            "noPrescriptions": "Aucune ordonnance",
+            "quantity": "Qté"
+        },
+        "hospitalisations": {
+            "title": "Hospitalisations",
+            "active": "En cours",
+            "finished": "Terminée",
+            "entry": "Entrée",
+            "exit": "Sortie prévue",
+            "noHospitalisations": "Aucune hospitalisation",
+            "room": "Chambre",
+            "bed": "Lit",
+            "day": "jour"
+        },
+        "appointments": {
+            "title": "Rendez-vous"
+        },
+        "metadata": {
+            "title": "Métadonnées STI",
+            "pathology": "Pathologie",
+            "complexity": "Niveau de Complexité",
+            "consultationInfo": "Informations de Consultation",
+            "date": "Date",
+            "price": "Prix",
+            "state": "État",
+            "payment": "Paiement",
+            "integrityHash": "Hash d'intégrité"
+        }
+    },
+    "casesCards": {
+        "searchPlaceholder": "Rechercher un patient, pathologie...",
+        "filters": "Filtres",
+        "refresh": "Rafraîchir",
+        "reset": "Réinitialiser",
+        "noCases": "Aucun cas trouvé",
+        "jsonDownloaded": "Fichier JSON téléchargé",
+        "loadError": "Erreur lors du chargement des cas",
+        "updateSuccess": "Dossier mis à jour",
+        "age": "ans",
+        "female": "Femme",
+        "male": "Homme",
+        "modify": "Modifier"
+    },
+    "rejectionModal": {
+        "title": "Rejeter le cas clinique",
+        "reasonLabel": "Raison du rejet",
+        "reasonPlaceholder": "Expliquez pourquoi ce cas est rejeté...",
+        "elementsLabel": "Éléments rejetés",
+        "confirm": "Confirmer le rejet",
+        "errorReason": "Veuillez saisir une raison pour le rejet.",
+        "errorElements": "Veuillez cocher au moins un élément rejeté.",
+        "elements": {
+            "patient": "Informations Patient",
+            "diagnostic": "Diagnostic",
+            "exams": "Examens",
+            "prescriptions": "Prescriptions",
+            "consultationReason": "Motif de consultation",
+            "medicalFolder": "Dossier Médical"
+        }
+    }
+}

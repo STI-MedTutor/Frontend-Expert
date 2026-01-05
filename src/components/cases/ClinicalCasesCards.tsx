@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Search, Filter, Edit2, User, Download, Activity } from 'lucide-react';
 import type { ClinicalCase } from '../../types/clinicalCase';
 import { clinicalCasesService } from '../../services/clinicalCasesService';
@@ -7,6 +8,7 @@ import { useToast } from '../../stores/toastStore';
 import ClinicalCaseModal from './ClinicalCaseModal';
 
 export default function ClinicalCasesCards() {
+    const { t } = useTranslation();
     const [cases, setCases] = useState<ClinicalCase[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -35,7 +37,7 @@ export default function ClinicalCasesCards() {
             );
             setCases(data);
         } catch (err: any) {
-            toast.error(err.message || "Erreur lors du chargement des cas");
+            toast.error(err.message || t("casesCards.loadError"));
         } finally {
             setIsLoading(false);
         }
@@ -71,7 +73,7 @@ export default function ClinicalCasesCards() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        toast.success("Fichier JSON téléchargé");
+        toast.success(t("casesCards.jsonDownloaded"));
     };
 
     const filteredCases = cases.filter(c =>
@@ -84,11 +86,11 @@ export default function ClinicalCasesCards() {
     const getNiveauBadge = (niveau?: string) => {
         switch (niveau) {
             case 'debutant':
-                return <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-700">🟢 Débutant</span>;
+                return <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-700">🟢 {t("cases.levels.beginner")}</span>;
             case 'intermediaire':
-                return <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-700">🟡 Intermédiaire</span>;
+                return <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-700">🟡 {t("cases.levels.intermediate")}</span>;
             case 'avance':
-                return <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-red-100 text-red-700">🔴 Avancé</span>;
+                return <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-red-100 text-red-700">🔴 {t("cases.levels.advanced")}</span>;
             default:
                 return <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-slate-100 text-slate-500">-</span>;
         }
@@ -115,7 +117,7 @@ export default function ClinicalCasesCards() {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
                             type="text"
-                            placeholder="Rechercher un patient, pathologie..."
+                            placeholder={t("casesCards.searchPlaceholder")}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
@@ -137,7 +139,7 @@ export default function ClinicalCasesCards() {
                                 }`}
                         >
                             <Filter className="w-4 h-4" />
-                            Filtres
+                            {t("casesCards.filters")}
                             {(filterPathologie || filterNiveau) && (
                                 <span className="w-2 h-2 bg-primary rounded-full" />
                             )}
@@ -147,7 +149,7 @@ export default function ClinicalCasesCards() {
                             className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-medium shadow-lg shadow-primary/20"
                         >
                             <Activity className="w-4 h-4" />
-                            Rafraîchir
+                            {t("casesCards.refresh")}
                         </button>
                     </div>
                 </div>
@@ -163,29 +165,29 @@ export default function ClinicalCasesCards() {
                         >
                             <div className="flex flex-wrap gap-4 pt-4 border-t border-slate-200">
                                 <div className="flex items-center gap-2">
-                                    <label className="text-sm font-medium text-slate-500">Pathologie:</label>
+                                    <label className="text-sm font-medium text-slate-500">{t("caseModal.metadata.pathology")}:</label>
                                     <select
                                         value={filterPathologie}
                                         onChange={(e) => setFilterPathologie(e.target.value)}
                                         className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm"
                                     >
-                                        <option value="">Toutes</option>
+                                        <option value="">{t("common.all")}</option>
                                         {availablePathologies.map(p => (
                                             <option key={p} value={p}>{p}</option>
                                         ))}
                                     </select>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <label className="text-sm font-medium text-slate-500">Niveau:</label>
+                                    <label className="text-sm font-medium text-slate-500">{t("caseModal.metadata.complexity")}:</label>
                                     <select
                                         value={filterNiveau}
                                         onChange={(e) => setFilterNiveau(e.target.value)}
                                         className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm"
                                     >
-                                        <option value="">Tous</option>
-                                        <option value="debutant">🟢 Débutant</option>
-                                        <option value="intermediaire">🟡 Intermédiaire</option>
-                                        <option value="avance">🔴 Avancé</option>
+                                        <option value="">{t("common.all")}</option>
+                                        <option value="debutant">🟢 {t("cases.levels.beginner")}</option>
+                                        <option value="intermediaire">🟡 {t("cases.levels.intermediate")}</option>
+                                        <option value="avance">🔴 {t("cases.levels.advanced")}</option>
                                     </select>
                                 </div>
                                 {(filterPathologie || filterNiveau) && (
@@ -193,7 +195,7 @@ export default function ClinicalCasesCards() {
                                         onClick={() => { setFilterPathologie(''); setFilterNiveau(''); }}
                                         className="px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                     >
-                                        Réinitialiser
+                                        {t("casesCards.reset")}
                                     </button>
                                 )}
                             </div>
@@ -237,7 +239,7 @@ export default function ClinicalCasesCards() {
                                                     {c.patient?.first_name} {c.patient?.last_name}
                                                 </h3>
                                                 <p className="text-xs text-slate-500">
-                                                    {calculateAge(c.patient?.birth_date || '')} ans • {c.patient?.gender === 'F' ? 'Femme' : 'Homme'}
+                                                    {calculateAge(c.patient?.birth_date || '')} {t("casesCards.age")} • {c.patient?.gender === 'F' ? t("casesCards.female") : t("casesCards.male")}
                                                 </p>
                                             </div>
                                         </div>
@@ -284,7 +286,7 @@ export default function ClinicalCasesCards() {
                                         className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/90 text-white rounded-lg hover:bg-primary transition-colors text-sm font-medium shadow-sm"
                                     >
                                         <Edit2 className="w-4 h-4" />
-                                        Modifier
+                                        {t("casesCards.modify")}
                                     </button>
                                 </div>
                             </motion.div>
@@ -297,7 +299,7 @@ export default function ClinicalCasesCards() {
             {!isLoading && filteredCases.length === 0 && (
                 <div className="text-center py-20">
                     <User className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-                    <p className="text-slate-500 text-lg">Aucun cas trouvé</p>
+                    <p className="text-slate-500 text-lg">{t("casesCards.noCases")}</p>
                 </div>
             )}
 
@@ -310,7 +312,7 @@ export default function ClinicalCasesCards() {
                     await clinicalCasesService.updateCase(updatedCase.id, updatedCase);
                     loadCases();
                     setIsModalOpen(false);
-                    toast.success("Dossier mis à jour");
+                    toast.success(t("casesCards.updateSuccess"));
                 }}
             />
         </div>

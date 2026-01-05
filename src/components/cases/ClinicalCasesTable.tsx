@@ -13,8 +13,10 @@ import { useToast } from '../../stores/toastStore';
 import { useAuth } from '../../stores/authStore';
 import ClinicalCaseModal from './ClinicalCaseModal';
 import RejectionModal from './RejectionModal';
+import { useTranslation } from 'react-i18next';
 
 export default function ClinicalCasesTable() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [cases, setCases] = useState<ClinicalCase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,7 +62,7 @@ export default function ClinicalCasesTable() {
       );
       setCases(data);
     } catch (err: any) {
-      const errorMsg = err.message || "Erreur lors du chargement des cas cliniques";
+      const errorMsg = err.message || t("cases.loadError");
       setError(errorMsg);
       toast.error(errorMsg);
     } finally {
@@ -111,9 +113,9 @@ export default function ClinicalCasesTable() {
       setEditingId(null);
 
       await clinicalCasesService.updateCase(id, editForm);
-      toast.success("Modifications enregistrées");
+      toast.success(t("cases.saveSuccess"));
     } catch (error) {
-      toast.error("Erreur lors de la sauvegarde");
+      toast.error(t("cases.saveError"));
       loadCases();
     }
   };
@@ -128,9 +130,9 @@ export default function ClinicalCasesTable() {
     try {
       await clinicalCasesService.approveCase(id, user.id, user.domaine_expertise || 'autre');
       setCases(prev => prev.map(c => c.id === id ? { ...c, approval_status: 'approved' } : c));
-      toast.success("Cas approuvé avec succès");
+      toast.success(t("cases.approveSuccess"));
     } catch (error) {
-      toast.error("Erreur lors de l'approbation");
+      toast.error(t("cases.approveError"));
     }
   };
 
@@ -144,11 +146,11 @@ export default function ClinicalCasesTable() {
         rejection_reason: reason,
         rejected_elements: rejectedElements
       } : c));
-      toast.success("Cas rejeté avec succès");
+      toast.success(t("cases.rejectSuccess"));
       setIsRejectionModalOpen(false);
       setCaseToReject(null);
     } catch (error) {
-      toast.error("Erreur lors du rejet");
+      toast.error(t("cases.rejectError"));
     }
   };
 
@@ -157,9 +159,9 @@ export default function ClinicalCasesTable() {
     try {
       await clinicalCasesService.setInProgress(id, user.id, user.domaine_expertise || 'autre');
       setCases(prev => prev.map(c => c.id === id ? { ...c, approval_status: 'pending' } : c));
-      toast.success("Cas mis en cours");
+      toast.success(t("cases.inProgressSuccess"));
     } catch (error) {
-      toast.error("Erreur lors de la mise en cours");
+      toast.error(t("cases.inProgressError"));
     }
   };
 
@@ -311,7 +313,7 @@ export default function ClinicalCasesTable() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Rechercher un patient, symptôme, pathologie..."
+              placeholder={t("common.search")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
@@ -340,7 +342,7 @@ export default function ClinicalCasesTable() {
                 }`}
             >
               <Filter className="w-4 h-4" />
-              Filtres
+              {t("cases.filters")}
               {(filterPathologie || filterNiveau || filterAgeGroup || filterGender || filterStatus !== 'pending') && (
                 <span className="w-2 h-2 bg-primary rounded-full" />
               )}
@@ -350,25 +352,25 @@ export default function ClinicalCasesTable() {
                 onClick={() => setFilterStatus('pending')}
                 className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterStatus === 'pending' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
-                En attente
+                {t("cases.status_pending")}
               </button>
               <button
                 onClick={() => setFilterStatus('approved')}
                 className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterStatus === 'approved' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
-                Approuvés
+                {t("cases.status_approved")}
               </button>
               <button
                 onClick={() => setFilterStatus('rejected')}
                 className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterStatus === 'rejected' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
-                Rejetés
+                {t("cases.status_rejected")}
               </button>
               <button
                 onClick={() => setFilterStatus('all')}
                 className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterStatus === 'all' ? 'bg-white text-slate-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
-                Tous
+                {t("cases.status_all")}
               </button>
             </div>
             {user?.is_teacher && (
@@ -380,7 +382,7 @@ export default function ClinicalCasesTable() {
                 className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium shadow-lg shadow-emerald-200"
               >
                 <Plus className="w-4 h-4" />
-                Nouveau Cas
+                {t("common.newCase")}
               </button>
             )}
             <button
@@ -388,7 +390,7 @@ export default function ClinicalCasesTable() {
               className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-medium shadow-lg shadow-primary/20"
             >
               <Activity className="w-4 h-4" />
-              Rafraîchir
+              {t("common.refresh")}
             </button>
           </div>
         </div>
@@ -404,26 +406,26 @@ export default function ClinicalCasesTable() {
             >
               <div className="flex flex-wrap gap-4 pt-4 border-t border-slate-200">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-slate-500">Pathologie:</label>
+                  <label className="text-sm font-medium text-slate-500">{t("cases.pathology")}:</label>
                   <select
                     value={filterPathologie}
                     onChange={(e) => setFilterPathologie(e.target.value)}
                     className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
                   >
-                    <option value="">Toutes</option>
+                    <option value="">{t("common.all")}</option>
                     {availablePathologies.map(p => (
                       <option key={p} value={p}>{p}</option>
                     ))}
                   </select>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-slate-500">Niveau:</label>
+                  <label className="text-sm font-medium text-slate-500">{t("cases.level")}:</label>
                   <select
                     value={filterNiveau}
                     onChange={(e) => setFilterNiveau(e.target.value)}
                     className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
                   >
-                    <option value="">Tous</option>
+                    <option value="">{t("common.all")}</option>
                     <option value="debutant">🟢 Débutant</option>
                     <option value="intermediaire">🟡 Intermédiaire</option>
                     <option value="avance">🔴 Avancé</option>
@@ -431,13 +433,13 @@ export default function ClinicalCasesTable() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-slate-500">Age:</label>
+                  <label className="text-sm font-medium text-slate-500">{t("cases.age")}:</label>
                   <select
                     value={filterAgeGroup}
                     onChange={(e) => setFilterAgeGroup(e.target.value)}
                     className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
                   >
-                    <option value="">Tous</option>
+                    <option value="">{t("common.all")}</option>
                     <option value="enfant">Enfant (&lt;12)</option>
                     <option value="adolescent">Adolescent (12-17)</option>
                     <option value="adulte">Adulte (18+)</option>
@@ -446,13 +448,13 @@ export default function ClinicalCasesTable() {
                   </select>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-slate-500">Sexe:</label>
+                  <label className="text-sm font-medium text-slate-500">{t("cases.gender")}:</label>
                   <select
                     value={filterGender}
                     onChange={(e) => setFilterGender(e.target.value)}
                     className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
                   >
-                    <option value="">Tous</option>
+                    <option value="">{t("common.all")}</option>
                     <option value="Masculin">Masculin</option>
                     <option value="Féminin">Féminin</option>
                   </select>
@@ -467,7 +469,7 @@ export default function ClinicalCasesTable() {
                     }}
                     className="px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   >
-                    Réinitialiser
+                    {t("common.cancel")}
                   </button>
                 )}
               </div>
@@ -491,13 +493,13 @@ export default function ClinicalCasesTable() {
           <table className="w-full">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[12%]">Patient</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[12%]">Motif</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[12%]">Diagnostic</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[15%]">Domaine</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[25%]">Pathologie</th>
-                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">Niveau</th>
-                <th className="px-4 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[14%]">Actions</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[12%]">{t("cases.patient")}</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[12%]">{t("cases.reason")}</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[12%]">{t("cases.diagnostic")}</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[15%]">{t("cases.domain")}</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[25%]">{t("cases.pathology")}</th>
+                <th className="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">{t("cases.level")}</th>
+                <th className="px-4 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[14%]">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -507,7 +509,7 @@ export default function ClinicalCasesTable() {
                     <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
                       <div className="flex justify-center items-center gap-3">
                         <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        Chargement des données...
+                        {t("common.loading")}
                       </div>
                     </td>
                   </tr>
@@ -571,7 +573,7 @@ export default function ClinicalCasesTable() {
                       ) : (
                         <div className="flex items-center gap-2">
                           <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200 max-w-[150px] truncate">
-                            {c.medical_folder_page?.diagnostic || 'En attente'}
+                            {c.medical_folder_page?.diagnostic || 'En cours'}
                           </span>
                         </div>
                       )}
@@ -666,28 +668,28 @@ export default function ClinicalCasesTable() {
                                 <button
                                   onClick={() => handleApprove(c.id)}
                                   className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100"
-                                  title="Approuver"
+                                  title={t("cases.approve")}
                                 >
                                   <Check className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => handleSetInProgress(c.id)}
                                   className="p-2 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all border border-amber-100"
-                                  title="Mettre en cours"
+                                  title={t("cases.setInProgress")}
                                 >
                                   <Activity className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteClick(c)}
                                   className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all border border-red-100"
-                                  title="Rejeter"
+                                  title={t("cases.reject")}
                                 >
                                   <X className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => handleEditClick(c)}
                                   className="p-2 text-slate-400 hover:text-primary hover:bg-purple-50 rounded-lg transition-all ml-1 border-l border-slate-200 pl-2"
-                                  title="Modification rapide"
+                                  title={t("cases.quickEdit")}
                                 >
                                   <Edit2 className="w-4 h-4" />
                                 </button>
@@ -698,19 +700,19 @@ export default function ClinicalCasesTable() {
                             {c.approval_status === 'approved' && (
                               <span className="px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold border border-emerald-200 flex items-center gap-1.5">
                                 <Check className="w-3.5 h-3.5" />
-                                Approuvé
+                                {t("cases.status_approved")}
                               </span>
                             )}
                             {c.approval_status === 'pending' && (
                               <span className="px-3 py-1.5 bg-amber-100 text-amber-700 rounded-lg text-xs font-bold border border-amber-200 flex items-center gap-1.5">
                                 <Activity className="w-3.5 h-3.5" />
-                                En cours
+                                {t("cases.status_pending")}
                               </span>
                             )}
                             {c.approval_status === 'rejected' && (
                               <span className="px-3 py-1.5 bg-red-100 text-red-700 rounded-lg text-xs font-bold border border-red-200 flex items-center gap-1.5" title={c.rejection_reason}>
                                 <X className="w-3.5 h-3.5" />
-                                Rejeté
+                                {t("cases.status_rejected")}
                               </span>
                             )}
 
@@ -734,10 +736,10 @@ export default function ClinicalCasesTable() {
 
         {/* Footer / Pagination */}
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
-          <span className="text-sm text-slate-500">Affichage de {finalFilteredCases.length} cas</span>
+          <span className="text-sm text-slate-500">{t("common.showing", { count: finalFilteredCases.length })}</span>
           <div className="flex gap-2">
-            <button className="px-3 py-1 text-sm border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50">Précédent</button>
-            <button className="px-3 py-1 text-sm border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50">Suivant</button>
+            <button className="px-3 py-1 text-sm border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50">{t("common.previous")}</button>
+            <button className="px-3 py-1 text-sm border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50">{t("common.next")}</button>
           </div>
         </div>
       </div>
@@ -751,11 +753,11 @@ export default function ClinicalCasesTable() {
           if (selectedCase) {
             // Mode édition
             await clinicalCasesService.updateCase(updatedCase.id, updatedCase);
-            toast.success("Dossier complet mis à jour");
+            toast.success(t("cases.updateSuccess"));
           } else {
             // Mode création
             await clinicalCasesService.createCase(updatedCase);
-            toast.success("Nouveau cas créé avec succès");
+            toast.success(t("cases.createSuccess"));
           }
           loadCases();
           setIsModalOpen(false);

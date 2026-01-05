@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, School, Clock, Trash2, BookOpen, ToggleLeft, ToggleRight, Calendar, Award, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { casEcoleService } from '../services/casEcoleService';
 import { authService } from '../services/authService';
 import type { CasEcole } from '../types/casEcole';
 import { useToast } from '../stores/toastStore';
 
 export default function SchoolClinicalCases() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [cases, setCases] = useState<CasEcole[]>([]);
     const [loading, setLoading] = useState(true);
@@ -34,22 +36,22 @@ export default function SchoolClinicalCases() {
         try {
             const updatedCase = await casEcoleService.toggleActif(id);
             setCases(cases.map(c => c.id === id ? updatedCase : c));
-            toast.success(updatedCase.actif ? "Cas activé" : "Cas désactivé");
+            toast.success(updatedCase.actif ? t("schoolCases.messages.activated") : t("schoolCases.messages.deactivated"));
         } catch (err) {
             console.error(err);
-            toast.error("Erreur lors du changement d'état");
+            toast.error(t("schoolCases.messages.errorToggle"));
         }
     };
 
     const handleDeleteClick = async (id: string) => {
-        if (window.confirm("Voulez-vous vraiment supprimer ce cas d'école ?")) {
+        if (window.confirm(t("schoolCases.messages.deleteConfirm"))) {
             try {
                 await casEcoleService.deleteCasEcole(id);
                 setCases(cases.filter(c => c.id !== id));
-                toast.success("Cas d'école supprimé");
+                toast.success(t("schoolCases.messages.deleted"));
             } catch (err) {
                 console.error(err);
-                toast.error("Erreur lors de la suppression");
+                toast.error(t("schoolCases.messages.errorDelete"));
             }
         }
     };
@@ -69,8 +71,8 @@ export default function SchoolClinicalCases() {
                 {/* Header */}
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h1 className="text-3xl font-bold text-slate-900">Cas Cliniques d'École</h1>
-                        <p className="text-slate-600 mt-2">Gérez vos évaluations et exercices pédagogiques</p>
+                        <h1 className="text-3xl font-bold text-slate-900">{t("schoolCases.title")}</h1>
+                        <p className="text-slate-600 mt-2">{t("schoolCases.subtitle")}</p>
                     </div>
                     <div className="flex gap-3">
                         <button
@@ -78,7 +80,7 @@ export default function SchoolClinicalCases() {
                             className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors shadow-sm shadow-purple-200"
                         >
                             <Plus size={20} />
-                            Nouveau Cas d'École
+                            {t("schoolCases.newCase")}
                         </button>
                     </div>
                 </div>
@@ -99,20 +101,20 @@ export default function SchoolClinicalCases() {
                                     ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
                                     : 'bg-slate-400 text-white shadow-lg shadow-slate-400/20'
                                     }`}>
-                                    {cas.actif ? 'Actif' : 'Brouillon'}
+                                    {cas.actif ? t("schoolCases.status.active") : t("schoolCases.status.draft")}
                                 </div>
                                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <button
                                         onClick={() => handleToggleActif(cas.id)}
                                         className="p-2 bg-white/90 backdrop-blur-sm text-slate-600 hover:text-purple-600 rounded-full shadow-sm border border-slate-100 transition-all"
-                                        title={cas.actif ? "Désactiver" : "Activer"}
+                                        title={cas.actif ? t("schoolCases.actions.deactivate") : t("schoolCases.actions.activate")}
                                     >
                                         {cas.actif ? <ToggleRight size={18} className="text-green-600" /> : <ToggleLeft size={18} />}
                                     </button>
                                     <button
                                         onClick={() => handleDeleteClick(cas.id)}
                                         className="p-2 bg-white/90 backdrop-blur-sm text-slate-600 hover:text-red-600 rounded-full shadow-sm border border-slate-100 transition-all"
-                                        title="Supprimer"
+                                        title={t("schoolCases.actions.delete")}
                                     >
                                         <Trash2 size={18} />
                                     </button>
@@ -127,7 +129,7 @@ export default function SchoolClinicalCases() {
                                 <div className="absolute bottom-4 left-6">
                                     <div className="flex items-center gap-2 text-xs font-bold text-purple-600/80 uppercase tracking-widest mb-1">
                                         <Award size={14} />
-                                        {cas.cas_clinique.metadata?.niveau_complexite || 'Débutant'}
+                                        {cas.cas_clinique.metadata?.niveau_complexite || t("cases.levels.beginner")}
                                     </div>
                                 </div>
                             </div>
@@ -143,7 +145,7 @@ export default function SchoolClinicalCases() {
                                             <School size={16} />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Établissement & Classe</span>
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{t("schoolCases.labels.institutionClass")}</span>
                                             <span className="text-sm font-semibold text-slate-700 truncate max-w-[180px]">{cas.ecole_nom} • {cas.classe_nom}</span>
                                         </div>
                                     </div>
@@ -153,13 +155,13 @@ export default function SchoolClinicalCases() {
                                             <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
                                                 <BookOpen size={14} />
                                             </div>
-                                            <span className="truncate">{cas.cas_clinique.metadata?.pathologie || "Pathologie inconnue"}</span>
+                                            <span className="truncate">{cas.cas_clinique.metadata?.pathologie || t("schoolCases.labels.unknownPathology")}</span>
                                         </div>
                                         <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
                                             <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
                                                 <Clock size={14} />
                                             </div>
-                                            <span>{cas.temps_limite_minutes} min</span>
+                                            <span>{cas.temps_limite_minutes} {t("schoolCases.labels.minutes")}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -173,7 +175,7 @@ export default function SchoolClinicalCases() {
                                         onClick={() => navigate(`/cas-ecole/edit/${cas.id}`)}
                                         className="flex items-center gap-1 text-xs font-bold text-purple-600 hover:text-purple-700 transition-colors group/btn"
                                     >
-                                        Détails
+                                        {t("schoolCases.actions.details")}
                                         <ChevronRight size={14} className="group-hover/btn:translate-x-0.5 transition-transform" />
                                     </button>
                                 </div>
@@ -184,13 +186,13 @@ export default function SchoolClinicalCases() {
                     {cases.length === 0 && !loading && (
                         <div className="col-span-full text-center py-12 bg-white rounded-xl border border-dashed border-slate-300">
                             <School size={48} className="mx-auto text-slate-300 mb-4" />
-                            <h3 className="text-lg font-medium text-slate-900">Aucun cas d'école</h3>
-                            <p className="text-slate-500 mb-6">Commencez par créer votre premier cas pédagogique.</p>
+                            <h3 className="text-lg font-medium text-slate-900">{t("schoolCases.messages.noCases")}</h3>
+                            <p className="text-slate-500 mb-6">{t("schoolCases.messages.noCasesDesc")}</p>
                             <button
                                 onClick={() => navigate('/cas-ecole/create')}
                                 className="text-purple-600 font-medium hover:text-indigo-700"
                             >
-                                Créer un cas maintenant &rarr;
+                                {t("schoolCases.messages.createNow")} &rarr;
                             </button>
                         </div>
                     )}

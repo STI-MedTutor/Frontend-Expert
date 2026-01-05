@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { X, User, Activity, FileText, Stethoscope, Save, AlertTriangle, TestTube, Pill, Building2, Calendar, Tag } from 'lucide-react';
 import type { ClinicalCase } from '../../types/clinicalCase';
 
@@ -15,6 +16,7 @@ interface ClinicalCaseModalProps {
 type Tab = 'identity' | 'clinical' | 'medical' | 'history' | 'exams' | 'prescriptions' | 'hospitalisations' | 'metadata';
 
 export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }: ClinicalCaseModalProps) {
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState<Tab>('identity');
   const [formData, setFormData] = useState<ClinicalCase | null>(null);
 
@@ -71,14 +73,14 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
   };
 
   const tabs = [
-    { id: 'identity', label: 'Identité', icon: User },
-    { id: 'clinical', label: 'Clinique', icon: Activity },
-    { id: 'medical', label: 'Dossier', icon: Stethoscope },
-    { id: 'history', label: 'Antécédents', icon: FileText },
-    { id: 'exams', label: 'Examens', icon: TestTube, count: formData.exam_requests?.length },
-    { id: 'prescriptions', label: 'Ordonnances', icon: Pill, count: formData.prescriptions?.length },
-    { id: 'hospitalisations', label: 'Hospitalisation', icon: Building2, count: formData.hospitalisations?.length },
-    { id: 'metadata', label: 'Métadonnées', icon: Tag },
+    { id: 'identity', label: t('caseModal.tabs.identity'), icon: User },
+    { id: 'clinical', label: t('caseModal.tabs.clinical'), icon: Activity },
+    { id: 'medical', label: t('caseModal.tabs.medical'), icon: Stethoscope },
+    { id: 'history', label: t('caseModal.tabs.history'), icon: FileText },
+    { id: 'exams', label: t('caseModal.tabs.exams'), icon: TestTube, count: formData.exam_requests?.length },
+    { id: 'prescriptions', label: t('caseModal.tabs.prescriptions'), icon: Pill, count: formData.prescriptions?.length },
+    { id: 'hospitalisations', label: t('caseModal.tabs.hospitalisations'), icon: Building2, count: formData.hospitalisations?.length },
+    { id: 'metadata', label: t('caseModal.tabs.metadata'), icon: Tag },
   ];
 
   return (
@@ -106,13 +108,13 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
             </div>
             <div>
               <h2 className="text-2xl font-bold text-slate-800">
-                {formData.patient?.first_name || 'Inconnu'} {formData.patient?.last_name || ''}
+                {formData.patient?.first_name || t('caseModal.patientInfo.unknown')} {formData.patient?.last_name || ''}
               </h2>
               <p className="text-sm text-slate-500 font-medium flex items-center gap-2">
                 <span className="bg-slate-200 px-2 py-0.5 rounded text-slate-600 text-xs uppercase tracking-wider">
                   {formData.id}
                 </span>
-                • {formData.patient?.birth_date ? `${new Date().getFullYear() - new Date(formData.patient.birth_date).getFullYear()} ans` : 'Âge inconnu'}
+                • {formData.patient?.birth_date ? `${new Date().getFullYear() - new Date(formData.patient.birth_date).getFullYear()} ${t('caseModal.patientInfo.years')}` : t('caseModal.patientInfo.ageUnknown')}
                 {formData.metadata?.pathologie && (
                   <span className="bg-purple-100 text-primary px-2 py-0.5 rounded text-xs font-bold">
                     {formData.metadata.pathologie}
@@ -171,11 +173,11 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                   <div className="space-y-6">
                     <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                       <User className="w-5 h-5 text-primary" />
-                      Informations Patient
+                      {t('caseModal.patientInfo.title')}
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Prénom</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.patientInfo.firstName')}</label>
                         <input
                           type="text"
                           value={formData.patient?.first_name || ''}
@@ -184,7 +186,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Nom</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.patientInfo.lastName')}</label>
                         <input
                           type="text"
                           value={formData.patient?.last_name || ''}
@@ -193,7 +195,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Date de Naissance</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.patientInfo.birthDate')}</label>
                         <input
                           type="date"
                           value={formData.patient?.birth_date ? formData.patient.birth_date.split('T')[0] : ''}
@@ -202,15 +204,15 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Sexe</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.patientInfo.gender')}</label>
                         <select
                           value={formData.patient?.gender || ''}
                           onChange={(e) => updatePatient('gender', e.target.value)}
                           className="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary outline-none"
                         >
-                          <option value="">Sélectionner</option>
-                          <option value="Masculin">Masculin</option>
-                          <option value="Féminin">Féminin</option>
+                          <option value="">{t('caseModal.patientInfo.select')}</option>
+                          <option value="Masculin">{t('caseModal.patientInfo.male')}</option>
+                          <option value="Féminin">{t('caseModal.patientInfo.female')}</option>
                         </select>
                       </div>
                     </div>
@@ -219,11 +221,11 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                   <div className="space-y-6">
                     <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                       <AlertTriangle className="w-5 h-5 text-amber-500" />
-                      Motif de Consultation
+                      {t('caseModal.consultation.title')}
                     </h3>
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Motif Principal</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.consultation.reason')}</label>
                         <input
                           type="text"
                           value={formData.consultation_reason || ''}
@@ -232,7 +234,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Notes Préliminaires</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.consultation.notes')}</label>
                         <textarea
                           rows={4}
                           value={formData.consultation_notes || ''}
@@ -251,11 +253,11 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                   <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
                       <Activity className="w-5 h-5 text-emerald-500" />
-                      Constantes Vitales
+                      {t('caseModal.vitalSigns.title')}
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Température (°C)</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.vitalSigns.temperature')}</label>
                         <div className="relative">
                           <input
                             type="number"
@@ -267,7 +269,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Tension (mmHg)</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.vitalSigns.bloodPressure')}</label>
                         <input
                           type="text"
                           value={formData.medical_folder_page?.parameters?.blood_pressure || ''}
@@ -276,7 +278,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Fréquence Card. (bpm)</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.vitalSigns.heartRate')}</label>
                         <input
                           type="number"
                           value={formData.medical_folder_page?.parameters?.heart_rate || ''}
@@ -285,7 +287,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Poids (kg)</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.vitalSigns.weight')}</label>
                         <input
                           type="number"
                           step="0.1"
@@ -298,7 +300,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Note Infirmière</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.vitalSigns.nurseNote')}</label>
                     <textarea
                       rows={6}
                       value={formData.medical_folder_page?.nurse_note || ''}
@@ -313,7 +315,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
               {activeTab === 'medical' && (
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Diagnostic Suspecté</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.medicalFolder.diagnostic')}</label>
                     <input
                       type="text"
                       value={formData.medical_folder_page?.diagnostic || ''}
@@ -323,13 +325,13 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Note du Médecin</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.medicalFolder.doctorNote')}</label>
                     <textarea
                       rows={10}
                       value={formData.medical_folder_page?.doctor_note || ''}
                       onChange={(e) => updateFolder('doctor_note', e.target.value)}
                       className="w-full p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary outline-none leading-relaxed font-serif text-lg text-slate-700"
-                      placeholder="Observations cliniques détaillées..."
+                      placeholder={t('caseModal.medicalFolder.placeholder')}
                     />
                   </div>
                 </div>
@@ -339,7 +341,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
               {activeTab === 'history' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Maladies Chroniques</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.history.chronicDiseases')}</label>
                     <textarea
                       rows={3}
                       value={formData.medical_folder_page?.parameters?.chronical_diseases || ''}
@@ -348,7 +350,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Allergies</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.history.allergies')}</label>
                     <textarea
                       rows={3}
                       value={formData.medical_folder_page?.parameters?.allergies || ''}
@@ -357,7 +359,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Médication Actuelle</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.history.currentMedication')}</label>
                     <textarea
                       rows={3}
                       value={formData.medical_folder_page?.parameters?.current_medication || ''}
@@ -366,7 +368,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Antécédents Familiaux</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.history.familyHistory')}</label>
                     <textarea
                       rows={3}
                       value={formData.medical_folder_page?.parameters?.family_medical_history || ''}
@@ -382,7 +384,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                 <div className="space-y-6">
                   <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <TestTube className="w-5 h-5 text-cyan-500" />
-                    Examens Demandés ({formData.exam_requests?.length || 0})
+                    {t('caseModal.exams.title')} ({formData.exam_requests?.length || 0})
                   </h3>
 
                   {formData.exam_requests && formData.exam_requests.length > 0 ? (
@@ -419,13 +421,13 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                           {/* Results */}
                           {exam.results && exam.results.length > 0 && (
                             <div className="border-t border-slate-100 pt-4 mt-4">
-                              <h5 className="text-xs font-bold text-slate-500 uppercase mb-3">Résultats</h5>
+                              <h5 className="text-xs font-bold text-slate-500 uppercase mb-3">{t('caseModal.exams.results')}</h5>
                               {exam.results.map((result, rIdx) => (
                                 <div key={rIdx} className="bg-emerald-50 border border-emerald-100 rounded-xl p-4">
                                   <p className="text-sm text-emerald-800">{result.notes}</p>
                                   {result.exam_file && (
                                     <a href={result.exam_file} className="text-xs text-emerald-600 underline mt-2 inline-block">
-                                      📎 Voir le fichier
+                                      📎 {t('caseModal.exams.viewFile')}
                                     </a>
                                   )}
                                 </div>
@@ -438,7 +440,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                   ) : (
                     <div className="text-center py-12 text-slate-400">
                       <TestTube className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                      <p>Aucun examen demandé</p>
+                      <p>{t('caseModal.exams.noExams')}</p>
                     </div>
                   )}
                 </div>
@@ -449,7 +451,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                 <div className="space-y-6">
                   <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <Pill className="w-5 h-5 text-green-500" />
-                    Ordonnances ({formData.prescriptions?.length || 0})
+                    {t('caseModal.prescriptions.title')} ({formData.prescriptions?.length || 0})
                   </h3>
 
                   {formData.prescriptions && formData.prescriptions.length > 0 ? (
@@ -458,7 +460,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                         <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
                           <div className="flex items-center justify-between">
                             <span className="text-sm text-slate-500">
-                              Prescrit le {new Date(prescription.add_date).toLocaleDateString('fr-FR')}
+                              {t('caseModal.prescriptions.prescribedOn')} {new Date(prescription.add_date).toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US')}
                             </span>
                           </div>
 
@@ -497,7 +499,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                   ) : (
                     <div className="text-center py-12 text-slate-400">
                       <Pill className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                      <p>Aucune ordonnance</p>
+                      <p>{t('caseModal.prescriptions.noPrescriptions')}</p>
                     </div>
                   )}
                 </div>
@@ -508,7 +510,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                 <div className="space-y-6">
                   <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <Building2 className="w-5 h-5 text-primary" />
-                    Hospitalisations ({formData.hospitalisations?.length || 0})
+                    {t('caseModal.hospitalisations.title')} ({formData.hospitalisations?.length || 0})
                   </h3>
 
                   {formData.hospitalisations && formData.hospitalisations.length > 0 ? (
@@ -522,29 +524,29 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                               </div>
                               <div>
                                 <h4 className="font-bold text-slate-800">{hosp.room?.room_label}</h4>
-                                <p className="text-sm text-slate-500">{hosp.bed_label} • Type: {hosp.room?.type}</p>
+                                <p className="text-sm text-slate-500">{hosp.bed_label} • {t('caseModal.hospitalisations.room')}: {hosp.room?.type}</p>
                               </div>
                             </div>
                             <div className="flex flex-col items-end gap-1">
                               <span className={`px-3 py-1 rounded-full text-xs font-bold ${hosp.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
                                 }`}>
-                                {hosp.is_active ? 'En cours' : 'Terminée'}
+                                {hosp.is_active ? t('caseModal.hospitalisations.active') : t('caseModal.hospitalisations.finished')}
                               </span>
                               <span className="text-sm font-mono text-slate-400">
-                                {hosp.room?.price?.toFixed(2)} €/jour
+                                {hosp.room?.price?.toFixed(2)} €/{t('caseModal.hospitalisations.day')}
                               </span>
                             </div>
                           </div>
 
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div className="bg-slate-50 p-3 rounded-xl">
-                              <span className="text-xs text-slate-400 uppercase">Entrée</span>
-                              <p className="font-medium text-slate-700">{new Date(hosp.at_date).toLocaleDateString('fr-FR')}</p>
+                              <span className="text-xs text-slate-400 uppercase">{t('caseModal.hospitalisations.entry')}</span>
+                              <p className="font-medium text-slate-700">{new Date(hosp.at_date).toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US')}</p>
                             </div>
                             <div className="bg-slate-50 p-3 rounded-xl">
-                              <span className="text-xs text-slate-400 uppercase">Sortie prévue</span>
+                              <span className="text-xs text-slate-400 uppercase">{t('caseModal.hospitalisations.exit')}</span>
                               <p className="font-medium text-slate-700">
-                                {hosp.remove_at ? new Date(hosp.remove_at).toLocaleDateString('fr-FR') : '-'}
+                                {hosp.remove_at ? new Date(hosp.remove_at).toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US') : '-'}
                               </p>
                             </div>
                           </div>
@@ -558,7 +560,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                   ) : (
                     <div className="text-center py-12 text-slate-400">
                       <Building2 className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                      <p>Aucune hospitalisation</p>
+                      <p>{t('caseModal.hospitalisations.noHospitalisations')}</p>
                     </div>
                   )}
 
@@ -567,14 +569,14 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                     <div className="mt-8">
                       <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-4">
                         <Calendar className="w-5 h-5 text-orange-500" />
-                        Rendez-vous ({formData.appointments.length})
+                        {t('caseModal.appointments.title')} ({formData.appointments.length})
                       </h3>
                       <div className="space-y-3">
                         {formData.appointments.map((apt, idx) => (
                           <div key={idx} className="bg-orange-50 border border-orange-100 rounded-xl p-4 flex items-center justify-between">
                             <div>
                               <p className="font-medium text-slate-800">{apt.reason}</p>
-                              <p className="text-sm text-slate-500">{new Date(apt.at_date).toLocaleString('fr-FR')}</p>
+                              <p className="text-sm text-slate-500">{new Date(apt.at_date).toLocaleString(i18n.language === 'fr' ? 'fr-FR' : 'en-US')}</p>
                             </div>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${apt.status === 'confirmé' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
                               }`}>
@@ -593,13 +595,13 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                 <div className="space-y-6">
                   <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <Tag className="w-5 h-5 text-primary" />
-                    Métadonnées STI
+                    {t('caseModal.metadata.title')}
                   </h3>
 
                   <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Pathologie</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.metadata.pathology')}</label>
                         <input
                           type="text"
                           value={formData.metadata?.pathologie || ''}
@@ -610,39 +612,39 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase">Niveau de Complexité</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase">{t('caseModal.metadata.complexity')}</label>
                         <select
                           value={formData.metadata?.niveau_complexite || ''}
                           onChange={(e) => updateMetadata('niveau_complexite', e.target.value)}
                           className="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary outline-none font-medium"
                         >
-                          <option value="">Sélectionner</option>
-                          <option value="debutant">🟢 Débutant</option>
-                          <option value="intermediaire">🟡 Intermédiaire</option>
-                          <option value="avance">🔴 Avancé</option>
+                          <option value="">{t('caseModal.patientInfo.select')}</option>
+                          <option value="debutant">🟢 {t('cases.levels.beginner')}</option>
+                          <option value="intermediaire">🟡 {t('cases.levels.intermediate')}</option>
+                          <option value="avance">🔴 {t('cases.levels.advanced')}</option>
                         </select>
                       </div>
                     </div>
 
                     <div className="border-t border-slate-100 pt-6">
-                      <h4 className="text-sm font-bold text-slate-600 mb-4">Informations de Consultation</h4>
+                      <h4 className="text-sm font-bold text-slate-600 mb-4">{t('caseModal.metadata.consultationInfo')}</h4>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div className="bg-slate-50 p-3 rounded-xl">
-                          <span className="text-xs text-slate-400 uppercase">Date</span>
+                          <span className="text-xs text-slate-400 uppercase">{t('caseModal.metadata.date')}</span>
                           <p className="font-medium text-slate-700">
-                            {formData.consultation_date ? new Date(formData.consultation_date).toLocaleDateString('fr-FR') : '-'}
+                            {formData.consultation_date ? new Date(formData.consultation_date).toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US') : '-'}
                           </p>
                         </div>
                         <div className="bg-slate-50 p-3 rounded-xl">
-                          <span className="text-xs text-slate-400 uppercase">Prix</span>
+                          <span className="text-xs text-slate-400 uppercase">{t('caseModal.metadata.price')}</span>
                           <p className="font-medium text-slate-700">{formData.consultation_price?.toFixed(2)} €</p>
                         </div>
                         <div className="bg-slate-50 p-3 rounded-xl">
-                          <span className="text-xs text-slate-400 uppercase">État</span>
+                          <span className="text-xs text-slate-400 uppercase">{t('caseModal.metadata.state')}</span>
                           <p className="font-medium text-slate-700">{formData.state}</p>
                         </div>
                         <div className="bg-slate-50 p-3 rounded-xl">
-                          <span className="text-xs text-slate-400 uppercase">Paiement</span>
+                          <span className="text-xs text-slate-400 uppercase">{t('caseModal.metadata.payment')}</span>
                           <p className="font-medium text-slate-700">{formData.payment_status}</p>
                         </div>
                       </div>
@@ -650,7 +652,7 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
 
                     {formData.metadata?.preuve_integrite && (
                       <div className="bg-slate-100 p-4 rounded-xl">
-                        <span className="text-xs text-slate-400 uppercase">Hash d'intégrité</span>
+                        <span className="text-xs text-slate-400 uppercase">{t('caseModal.metadata.integrityHash')}</span>
                         <p className="font-mono text-xs text-slate-600 break-all mt-1">{formData.metadata.preuve_integrite}</p>
                       </div>
                     )}
@@ -667,14 +669,14 @@ export default function ClinicalCaseModal({ isOpen, onClose, caseData, onSave }:
             onClick={onClose}
             className="px-6 py-3 rounded-xl text-slate-500 font-bold hover:bg-slate-50 transition-colors"
           >
-            Annuler
+            {t('common.cancel')}
           </button>
           <button
             onClick={handleSave}
             className="px-8 py-3 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 hover:scale-105 transition-all flex items-center gap-2"
           >
             <Save className="w-5 h-5" />
-            Enregistrer les modifications
+            {t('profile.saveChanges')}
           </button>
         </div>
       </motion.div>

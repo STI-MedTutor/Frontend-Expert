@@ -143,21 +143,8 @@ export const expertService = {
     recent_activities: Array<{ text: string; time: string; type: string }>;
   }> {
     try {
-      // Note: This endpoint is on the main backend, not the expert agent
-      // We need to use a different axios instance or full URL if they differ.
-      // Assuming EXPERT_ENDPOINTS.EXPERT_BY_ID is correct relative to expertApi's base URL.
-      // Wait, expertApi uses EXPERT_API_URL (port 5001) but expert stats are on Learner_auth_API (port 5004).
-      // We should use userService or a new axios instance for port 5004 calls if expertApi is strictly for the agent.
-      // However, looking at api.ts, EXPERT_API_URL is 5001. BACKEND_ENDPOINTS are for 5004.
-      // Let's check where getExpertStats should really go. It was in expertService.ts before.
-      // If the route is in expert.py (Learner_auth_API), we should use an axios instance pointing to API_BASE_URL (5004).
-
-      // Let's use a direct axios call or import an instance that points to the main backend.
-      // For now, I'll assume I can use the full URL from CONFIG/constants.
-
       const { API_BASE_URL } = await import('../constants/api');
       const token = localStorage.getItem('auth_token');
-
       const response = await axios.get(`${API_BASE_URL}/expert/${expertId}/stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });

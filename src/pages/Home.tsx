@@ -2,9 +2,11 @@ import { Button } from "../components/ui/Button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Activity, ShieldCheck, Users } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import heroImage from "../assets/patient2.png";
 
 export default function Home() {
+    const { t } = useTranslation();
     const container = {
         hidden: { opacity: 0 },
         show: {
@@ -40,26 +42,25 @@ export default function Home() {
                     */}
 
                     <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight text-slate-900">
-                        L’expertise des cas cliniques <br />
+                        {t("home.hero.title")} <br />
                         <span className="bg-gradient-to-r from-primary via-accent to-purple-600 bg-clip-text text-transparent">
-                            à portée de main
+                            {t("home.hero.titleAccent")}
                         </span>
                     </h1>
 
                     <p className="max-w-xl text-xl text-slate-600 leading-relaxed">
-                        La plateforme dérivée de MedTutor pour la gestion des cas cliniques ,
-                        Une interface moderne, intuitive et sécurisée pour les professionnels de santé.
+                        {t("home.hero.subtitle")}
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                         <Link to="/cases">
                             <Button size="lg" variant="gradient" className="gap-2 w-full sm:w-auto text-lg h-14 px-8 rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/30">
-                                Gérer les Cas Cliniques <ArrowRight className="h-5 w-5" />
+                                {t("home.hero.manageCases")} <ArrowRight className="h-5 w-5" />
                             </Button>
                         </Link>
                         <Link to="/profile">
                             <Button variant="glass" size="lg" className="gap-2 w-full sm:w-auto text-lg h-14 px-8 rounded-2xl">
-                                Mon Profil <Users className="h-5 w-5" />
+                                {t("home.hero.myProfile")} <Users className="h-5 w-5" />
                             </Button>
                         </Link>
                     </div>
@@ -156,9 +157,9 @@ export default function Home() {
                     <div className="rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 p-4 text-primary shadow-inner group-hover:scale-110 transition-transform duration-300">
                         <Activity className="h-8 w-8" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-800">Gestion Intuitive</h3>
+                    <h3 className="text-2xl font-bold text-slate-800">{t("home.features.intuitive.title")}</h3>
                     <p className="text-slate-600 leading-relaxed">
-                        Créez, modifiez et suivez vos cas cliniques avec une facilité déconcertante grâce à nos outils intelligents.
+                        {t("home.features.intuitive.description")}
                     </p>
                 </motion.div>
 
@@ -166,9 +167,9 @@ export default function Home() {
                     <div className="rounded-2xl bg-gradient-to-br from-fuchsia-50 to-fuchsia-100 p-4 text-accent shadow-inner group-hover:scale-110 transition-transform duration-300">
                         <ShieldCheck className="h-8 w-8" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-800">Sécurité Maximale</h3>
+                    <h3 className="text-2xl font-bold text-slate-800">{t("home.features.security.title")}</h3>
                     <p className="text-slate-600 leading-relaxed">
-                        Vos données et celles de vos patients sont protégées par les meilleurs standards de chiffrement.
+                        {t("home.features.security.description")}
                     </p>
                 </motion.div>
 
@@ -176,9 +177,9 @@ export default function Home() {
                     <div className="rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 p-4 text-purple-600 shadow-inner group-hover:scale-110 transition-transform duration-300">
                         <Users className="h-8 w-8" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-800">Communauté Expert</h3>
+                    <h3 className="text-2xl font-bold text-slate-800">{t("home.features.community.title")}</h3>
                     <p className="text-slate-600 leading-relaxed">
-                        Rejoignez une communauté d'experts, partagez vos connaissances et collaborez sur des cas complexes.
+                        {t("home.features.community.description")}
                     </p>
                 </motion.div>
             </motion.div>

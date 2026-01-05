@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { X, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface RejectionModalProps {
@@ -10,15 +11,16 @@ interface RejectionModalProps {
 }
 
 const REJECTABLE_ELEMENTS = [
-    { id: 'patient', label: 'Informations Patient' },
-    { id: 'diagnostic', label: 'Diagnostic' },
-    { id: 'exam_requests', label: 'Examens' },
-    { id: 'prescriptions', label: 'Prescriptions' },
-    { id: 'consultation_reason', label: 'Motif de consultation' },
-    { id: 'medical_folder', label: 'Dossier Médical' }
+    { id: 'patient', label: 'Informations Patient', key: 'rejectionModal.elements.patient' },
+    { id: 'diagnostic', label: 'Diagnostic', key: 'rejectionModal.elements.diagnostic' },
+    { id: 'exam_requests', label: 'Examens', key: 'rejectionModal.elements.exams' },
+    { id: 'prescriptions', label: 'Prescriptions', key: 'rejectionModal.elements.prescriptions' },
+    { id: 'consultation_reason', label: 'Motif de consultation', key: 'rejectionModal.elements.consultationReason' },
+    { id: 'medical_folder', label: 'Dossier Médical', key: 'rejectionModal.elements.medicalFolder' }
 ];
 
 export default function RejectionModal({ isOpen, onClose, onConfirm, caseTitle }: RejectionModalProps) {
+    const { t } = useTranslation();
     const [reason, setReason] = useState('');
     const [selectedElements, setSelectedElements] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -34,11 +36,11 @@ export default function RejectionModal({ isOpen, onClose, onConfirm, caseTitle }
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!reason.trim()) {
-            setError('Veuillez saisir une raison pour le rejet.');
+            setError(t('rejectionModal.errorReason'));
             return;
         }
         if (selectedElements.length === 0) {
-            setError('Veuillez cocher au moins un élément rejeté.');
+            setError(t('rejectionModal.errorElements'));
             return;
         }
         onConfirm(reason, selectedElements);
@@ -60,7 +62,7 @@ export default function RejectionModal({ isOpen, onClose, onConfirm, caseTitle }
                         {/* Header */}
                         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <div>
-                                <h3 className="text-xl font-bold text-slate-900">Rejeter le cas clinique</h3>
+                                <h3 className="text-xl font-bold text-slate-900">{t('rejectionModal.title')}</h3>
                                 <p className="text-sm text-slate-500 truncate max-w-[300px]">{caseTitle}</p>
                             </div>
                             <button
@@ -86,7 +88,7 @@ export default function RejectionModal({ isOpen, onClose, onConfirm, caseTitle }
                             {/* Reason */}
                             <div className="space-y-2">
                                 <label className="text-sm font-bold text-slate-700 block">
-                                    Raison du rejet <span className="text-red-500">*</span>
+                                    {t('rejectionModal.reasonLabel')} <span className="text-red-500">*</span>
                                 </label>
                                 <textarea
                                     value={reason}
@@ -94,7 +96,7 @@ export default function RejectionModal({ isOpen, onClose, onConfirm, caseTitle }
                                         setReason(e.target.value);
                                         if (error) setError(null);
                                     }}
-                                    placeholder="Expliquez pourquoi ce cas est rejeté..."
+                                    placeholder={t('rejectionModal.reasonPlaceholder')}
                                     className="w-full h-32 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all resize-none text-slate-700"
                                 />
                             </div>
@@ -102,7 +104,7 @@ export default function RejectionModal({ isOpen, onClose, onConfirm, caseTitle }
                             {/* Elements */}
                             <div className="space-y-3">
                                 <label className="text-sm font-bold text-slate-700 block">
-                                    Éléments rejetés <span className="text-red-500">*</span>
+                                    {t('rejectionModal.elementsLabel')} <span className="text-red-500">*</span>
                                 </label>
                                 <div className="grid grid-cols-2 gap-3">
                                     {REJECTABLE_ELEMENTS.map((element) => (
@@ -111,17 +113,17 @@ export default function RejectionModal({ isOpen, onClose, onConfirm, caseTitle }
                                             type="button"
                                             onClick={() => handleToggleElement(element.id)}
                                             className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${selectedElements.includes(element.id)
-                                                    ? 'bg-red-50 border-red-200 text-red-700 shadow-sm'
-                                                    : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                                                ? 'bg-red-50 border-red-200 text-red-700 shadow-sm'
+                                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
                                                 }`}
                                         >
                                             <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${selectedElements.includes(element.id)
-                                                    ? 'bg-red-500 border-red-500 text-white'
-                                                    : 'bg-white border-slate-300'
+                                                ? 'bg-red-500 border-red-500 text-white'
+                                                : 'bg-white border-slate-300'
                                                 }`}>
                                                 {selectedElements.includes(element.id) && <CheckCircle2 size={14} />}
                                             </div>
-                                            <span className="text-xs font-semibold">{element.label}</span>
+                                            <span className="text-xs font-semibold">{t(element.key as any)}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -134,13 +136,13 @@ export default function RejectionModal({ isOpen, onClose, onConfirm, caseTitle }
                                     onClick={onClose}
                                     className="flex-1 px-6 py-3 border border-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-50 transition-all"
                                 >
-                                    Annuler
+                                    {t('common.cancel')}
                                 </button>
                                 <button
                                     type="submit"
                                     className="flex-1 px-6 py-3 bg-red-600 text-white font-bold rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-200"
                                 >
-                                    Confirmer le rejet
+                                    {t('rejectionModal.confirm')}
                                 </button>
                             </div>
                         </form>
