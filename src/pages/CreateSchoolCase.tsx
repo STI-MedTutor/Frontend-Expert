@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import {
     ArrowLeft, Save, Search, Filter, Clock, AlertTriangle,
     CheckCircle, GraduationCap, Users, ChevronRight, ChevronLeft, FileText,
@@ -16,6 +16,7 @@ import type { ClinicalCase, ExamRequest, Prescription, Hospitalisation } from '.
 export default function CreateSchoolCase() {
     const navigate = useNavigate();
     const location = useLocation();
+    const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const [step, setStep] = useState(1);
     const [activeTab, setActiveTab] = useState('identity');
@@ -77,6 +78,28 @@ export default function CreateSchoolCase() {
                 const loadedCase = location.state.loadedCase as ClinicalCase;
                 setSelectedCase(loadedCase);
                 setStep(2);
+            } else if (id) {
+                // Load existing school case for editing
+                try {
+                    const casEcole = await casEcoleService.getCasEcoleById(id);
+                    if (casEcole) {
+                        setFormData({
+                            titre: casEcole.titre,
+                            ecole_id: casEcole.ecole_id,
+                            ecole_nom: casEcole.ecole_nom,
+                            classe_id: casEcole.classe_id,
+                            classe_nom: casEcole.classe_nom,
+                            temps_limite_minutes: casEcole.temps_limite_minutes,
+                            penalite_par_minute: casEcole.penalite_par_minute
+                        });
+                        setSelectedCase(casEcole.cas_clinique);
+                        setStep(2); // Go directly to customization
+                    }
+                } catch (error) {
+                    console.error("Error loading school case:", error);
+                    alert("Erreur lors du chargement du cas d'école");
+                    navigate('/cas-ecole');
+                }
             }
         } catch (err) {
             console.error(err);
@@ -305,19 +328,34 @@ export default function CreateSchoolCase() {
 
         try {
             setLoading(true);
-            await casEcoleService.createCasEcole({
-                titre: formData.titre,
-                ecole_id: formData.ecole_id || 1,
-                ecole_nom: formData.ecole_nom || "École par défaut",
-                classe_id: formData.classe_id || 1,
-                classe_nom: formData.classe_nom || "Classe par défaut",
-                professeur_id: parseInt(user.id),
-                professeur_nom: `${user.prenom} ${user.nom}`,
-                professeur_email: user.email,
-                cas_clinique: selectedCase,
-                temps_limite_minutes: formData.temps_limite_minutes,
-                penalite_par_minute: formData.penalite_par_minute
-            });
+            if (id) {
+                // Update existing case
+                await casEcoleService.updateCasEcole(id, {
+                    titre: formData.titre,
+                    ecole_id: formData.ecole_id || 1,
+                    ecole_nom: formData.ecole_nom || "École par défaut",
+                    classe_id: formData.classe_id || 1,
+                    classe_nom: formData.classe_nom || "Classe par défaut",
+                    cas_clinique: selectedCase,
+                    temps_limite_minutes: formData.temps_limite_minutes,
+                    penalite_par_minute: formData.penalite_par_minute
+                });
+            } else {
+                // Create new case
+                await casEcoleService.createCasEcole({
+                    titre: formData.titre,
+                    ecole_id: formData.ecole_id || 1,
+                    ecole_nom: formData.ecole_nom || "École par défaut",
+                    classe_id: formData.classe_id || 1,
+                    classe_nom: formData.classe_nom || "Classe par défaut",
+                    professeur_id: user.id,
+                    professeur_nom: `${user.prenom} ${user.nom}`,
+                    professeur_email: user.email,
+                    cas_clinique: selectedCase,
+                    temps_limite_minutes: formData.temps_limite_minutes,
+                    penalite_par_minute: formData.penalite_par_minute
+                });
+            }
             navigate('/cas-ecole');
         } catch (err) {
             console.error(err);
@@ -376,8 +414,8 @@ export default function CreateSchoolCase() {
                                     className="space-y-6"
                                 >
                                     <div className="text-center mb-8">
-                                        <h1 className="text-2xl font-bold text-slate-900">Sélectionnez un cas clinique</h1>
-                                        <p className="text-slate-500">Choisissez le cas de base pour votre évaluation</p>
+                                        <h1 className="text-2xl font-bold text-slate-900">{id ? 'Modifier le cas d\'école' : 'Sélectionnez un cas clinique'}</h1>
+                                        <p className="text-slate-500">{id ? 'Modifiez les informations du cas' : 'Choisissez le cas de base pour votre évaluation'}</p>
                                     </div>
 
                                     {/* Filters */}

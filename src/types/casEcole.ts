@@ -47,6 +47,11 @@ export interface CreateCasEcoleFromFultangPayload {
 
 export interface UpdateCasEcolePayload {
     titre?: string;
+    ecole_id?: number;
+    ecole_nom?: string;
+    classe_id?: number;
+    classe_nom?: string;
+    cas_clinique?: ClinicalCase;
     temps_limite_minutes?: number;
     penalite_par_minute?: number;
     actif?: boolean;
