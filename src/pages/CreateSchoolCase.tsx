@@ -789,7 +789,7 @@ export default function CreateSchoolCase() {
                                                         rows={3}
                                                         value={selectedCase.medical_folder_page?.parameters?.chronical_diseases || ''}
                                                         onChange={(e) => updateParameters('chronical_diseases', e.target.value)}
-                                                        className="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                                        className="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 outline-none"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
@@ -798,7 +798,7 @@ export default function CreateSchoolCase() {
                                                         rows={3}
                                                         value={selectedCase.medical_folder_page?.parameters?.allergies || ''}
                                                         onChange={(e) => updateParameters('allergies', e.target.value)}
-                                                        className="w-full p-3 bg-red-50 border border-red-100 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-red-800"
+                                                        className="w-full p-3 bg-red-50 border border-red-100 rounded-xl focus:ring-2 focus:ring-red-600 outline-none text-red-800"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
@@ -807,7 +807,7 @@ export default function CreateSchoolCase() {
                                                         rows={3}
                                                         value={selectedCase.medical_folder_page?.parameters?.current_medication || ''}
                                                         onChange={(e) => updateParameters('current_medication', e.target.value)}
-                                                        className="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                                        className="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-600 outline-none"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">

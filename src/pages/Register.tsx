@@ -5,7 +5,7 @@ import { Input } from "../components/ui/Input";
 import { Stethoscope, Mail, Lock, User, ArrowRight, Github, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import authBg from "../assets/auth-bg.png";
+import authBg from "../assets/auth-bg-DGtuYTRy.png";
 import { useAuth } from "../stores/authStore";
 
 export default function Register() {

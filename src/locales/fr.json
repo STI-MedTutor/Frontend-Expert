@@ -1,8 +1,11 @@
 {
     "nav": {
         "cases": "Gestion Cas Cliniques",
+        "casesDesc": "Gérer et valider les cas cliniques",
         "schoolCases": "Cas clinique d'école",
+        "schoolCasesDesc": "Créer et gérer les exercices pédagogiques",
         "admin": "Administration",
+        "adminDesc": "Administration du système",
         "profile": "Profil Expert",
         "myProfile": "Mon Profil",
         "logout": "Déconnexion",

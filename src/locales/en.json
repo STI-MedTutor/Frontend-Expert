@@ -1,8 +1,11 @@
 {
     "nav": {
         "cases": "Clinical Cases Management",
+        "casesDesc": "Manage and validate clinical cases",
         "schoolCases": "School Clinical Cases",
+        "schoolCasesDesc": "Create and manage pedagogical exercises",
         "admin": "Administration",
+        "adminDesc": "System administration",
         "profile": "Expert Profile",
         "myProfile": "My Profile",
         "logout": "Logout",

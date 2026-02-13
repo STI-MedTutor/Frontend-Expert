@@ -77,7 +77,7 @@ export default function SchoolClinicalCases() {
                     <div className="flex gap-3">
                         <button
                             onClick={() => navigate('/cas-ecole/create')}
-                            className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors shadow-sm shadow-purple-200"
+                            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200"
                         >
                             <Plus size={20} />
                             {t("schoolCases.newCase")}
@@ -93,7 +93,7 @@ export default function SchoolClinicalCases() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
-                            className="group relative bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-purple-500/10 hover:border-purple-200 transition-all duration-300"
+                            className="group relative bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-200 transition-all duration-300"
                         >
                             {/* Status Badge & Actions Overlay */}
                             <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
@@ -106,7 +106,7 @@ export default function SchoolClinicalCases() {
                                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <button
                                         onClick={() => handleToggleActif(cas.id)}
-                                        className="p-2 bg-white/90 backdrop-blur-sm text-slate-600 hover:text-purple-600 rounded-full shadow-sm border border-slate-100 transition-all"
+                                        className="p-2 bg-white/90 backdrop-blur-sm text-slate-600 hover:text-indigo-600 rounded-full shadow-sm border border-slate-100 transition-all"
                                         title={cas.actif ? t("schoolCases.actions.deactivate") : t("schoolCases.actions.activate")}
                                     >
                                         {cas.actif ? <ToggleRight size={18} className="text-green-600" /> : <ToggleLeft size={18} />}
@@ -122,12 +122,12 @@ export default function SchoolClinicalCases() {
                             </div>
 
                             {/* Card Header with Gradient Accent */}
-                            <div className="h-24 bg-gradient-to-br from-purple-50 to-indigo-50 relative overflow-hidden">
-                                <div className="absolute -right-4 -top-4 w-24 h-24 bg-purple-200/20 rounded-full blur-2xl group-hover:bg-purple-400/30 transition-colors duration-500" />
+                            <div className="h-24 bg-gradient-to-br from-indigo-50 to-indigo-50 relative overflow-hidden">
+                                <div className="absolute -right-4 -top-4 w-24 h-24 bg-indigo-200/20 rounded-full blur-2xl group-hover:bg-indigo-400/30 transition-colors duration-500" />
                                 <div className="absolute -left-4 -bottom-4 w-20 h-20 bg-indigo-200/20 rounded-full blur-xl group-hover:bg-indigo-400/30 transition-colors duration-500" />
 
                                 <div className="absolute bottom-4 left-6">
-                                    <div className="flex items-center gap-2 text-xs font-bold text-purple-600/80 uppercase tracking-widest mb-1">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-indigo-600/80 uppercase tracking-widest mb-1">
                                         <Award size={14} />
                                         {cas.cas_clinique.metadata?.niveau_complexite || t("cases.levels.beginner")}
                                     </div>
@@ -135,13 +135,13 @@ export default function SchoolClinicalCases() {
                             </div>
 
                             <div className="p-6 pt-4">
-                                <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-purple-700 transition-colors line-clamp-2 leading-tight">
+                                <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-indigo-700 transition-colors line-clamp-2 leading-tight">
                                     {cas.titre}
                                 </h3>
 
                                 <div className="space-y-4 mb-6">
-                                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl group-hover:bg-purple-50/50 transition-colors">
-                                        <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-purple-600">
+                                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl group-hover:bg-indigo-50/50 transition-colors">
+                                        <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-indigo-600">
                                             <School size={16} />
                                         </div>
                                         <div className="flex flex-col">
@@ -173,7 +173,7 @@ export default function SchoolClinicalCases() {
                                     </div>
                                     <button
                                         onClick={() => navigate(`/cas-ecole/edit/${cas.id}`)}
-                                        className="flex items-center gap-1 text-xs font-bold text-purple-600 hover:text-purple-700 transition-colors group/btn"
+                                        className="flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors group/btn"
                                     >
                                         {t("schoolCases.actions.details")}
                                         <ChevronRight size={14} className="group-hover/btn:translate-x-0.5 transition-transform" />
@@ -190,7 +190,7 @@ export default function SchoolClinicalCases() {
                             <p className="text-slate-500 mb-6">{t("schoolCases.messages.noCasesDesc")}</p>
                             <button
                                 onClick={() => navigate('/cas-ecole/create')}
-                                className="text-purple-600 font-medium hover:text-indigo-700"
+                                className="text-indigo-600 font-medium hover:text-indigo-700"
                             >
                                 {t("schoolCases.messages.createNow")} &rarr;
                             </button>

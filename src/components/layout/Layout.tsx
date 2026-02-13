@@ -6,6 +6,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../stores/authStore";
 import doctorAvatar from "../../assets/doctor-avatar.png";
 import { useTranslation } from "react-i18next";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "../ui/tooltip";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const { t, i18n } = useTranslation();
@@ -51,21 +57,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const navItems = [
         {
             name: t("nav.cases"),
+            description: t("nav.casesDesc"),
             path: "/cases",
             icon: Activity,
         },
         ...(user?.is_teacher || user?.is_enseignant ? [{
             name: t("nav.schoolCases"),
+            description: t("nav.schoolCasesDesc"),
             path: "/cas-ecole",
             icon: GraduationCap,
         }] : []),
         ...(userType === 'gerant' ? [{
             name: t("nav.admin"),
+            description: t("nav.adminDesc"),
             path: "/admin",
             icon: Shield,
         }] : []),
         {
             name: t("nav.profile"),
+            description: t("nav.profile"),
             path: "/profile",
             icon: User,
         },
@@ -87,48 +97,29 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
                     {/* Desktop Nav */}
                     <div className="hidden md:flex items-center gap-4">
-                        {isAuthenticated && (
-                            <Link
-                                to="/cases"
-                                className={cn(
-                                    "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
-                                    location.pathname === "/cases"
-                                        ? "text-primary bg-purple-50/50"
-                                        : "text-slate-600 hover:text-primary hover:bg-slate-50"
-                                )}
-                            >
-                                <Activity className="h-4 w-4" />
-                                {t("nav.cases")}
-                            </Link>
-                        )}
-                        {isAuthenticated && (!!user?.is_teacher || !!user?.is_enseignant) && (
-                            <Link
-                                to="/cas-ecole"
-                                className={cn(
-                                    "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
-                                    location.pathname === "/cas-ecole"
-                                        ? "text-primary bg-purple-50/50"
-                                        : "text-slate-600 hover:text-primary hover:bg-slate-50"
-                                )}
-                            >
-                                <GraduationCap className="h-4 w-4" />
-                                {t("nav.schoolCases")}
-                            </Link>
-                        )}
-                        {isAuthenticated && userType === 'gerant' && (
-                            <Link
-                                to="/admin"
-                                className={cn(
-                                    "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
-                                    location.pathname.startsWith("/admin")
-                                        ? "text-indigo-600 bg-indigo-50"
-                                        : "text-slate-600 hover:text-indigo-600 hover:bg-slate-50"
-                                )}
-                            >
-                                <Shield className="h-4 w-4" />
-                                {t("nav.admin")}
-                            </Link>
-                        )}
+                        {isAuthenticated && navItems.filter(item => item.path !== '/profile').map((item) => (
+                            <TooltipProvider key={item.path}>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Link
+                                            to={item.path}
+                                            className={cn(
+                                                "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
+                                                location.pathname.startsWith(item.path)
+                                                    ? "text-primary bg-purple-50/50 scale-105 shadow-sm font-semibold"
+                                                    : "text-slate-600 hover:text-primary hover:bg-slate-50"
+                                            )}
+                                        >
+                                            <item.icon className="h-4 w-4" />
+                                            {item.name}
+                                        </Link>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{item.description}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        ))}
 
                         <div className="h-6 w-px bg-slate-200 mx-2" />
 

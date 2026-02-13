@@ -7,7 +7,7 @@ import doctorAvatar from "../assets/doctor-avatar.png";
 import { userService } from "../services/userService";
 import { useAuth } from "../stores/authStore";
 import { expertService } from "../services/expertService";
-import { clinicalCasesService } from "../services/clinicalCasesService";
+import { casEcoleService } from "../services/casEcoleService";
 import { useTranslation } from "react-i18next";
 
 export default function ExpertProfile() {
@@ -44,11 +44,10 @@ export default function ExpertProfile() {
                     avatar: doctorAvatar
                 });
 
-                // 2. Load Clinical Cases Stats
-                const cases = await clinicalCasesService.getCases();
-                const total = cases.length;
-                // Assuming all fetched cases are 'published' or active for now as we don't have a status field
-                const published = total;
+                // 2. Load School Cases Stats
+                const schoolCases = await casEcoleService.getAllCasEcole(profileData.id);
+                const total = schoolCases.length;
+                const published = schoolCases.filter(c => c.actif).length;
 
                 // 3. Load School Stats (if teacher)
                 let schoolStats: { school_case_activity: number[]; school_case_labels: string[]; recent_activities: any[] } = { school_case_activity: [], school_case_labels: [], recent_activities: [] };
